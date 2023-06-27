@@ -1,0 +1,12 @@
+.container {
+  display: block;
+  padding: 15px;
+}
+
+.container-chip-list {
+  width: 100%;
+}
+
+.file-input {
+  display: none;
+}

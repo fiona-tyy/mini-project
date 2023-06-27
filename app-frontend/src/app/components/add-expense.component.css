@@ -1,0 +1,21 @@
+.container-main {
+  display: block;
+  padding: 15px;
+}
+
+.container-content {
+  display: block;
+  margin-top: 20px;
+}
+
+.file-input {
+  display: none;
+}
+
+.container-form-field {
+  width: 250px;
+  margin-right: 20px;
+}
+.container-chip-list {
+  width: 400px;
+}

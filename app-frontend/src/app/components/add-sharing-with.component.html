@@ -1,0 +1,74 @@
+<div class="container">
+  <h3>Add new expense</h3>
+  <div>
+    <p>With <strong>you</strong> and:</p>
+    <p>
+      <mat-form-field class="container-chip-list">
+        <mat-chip-grid #chipGrid aria-label="Friend selection">
+          <mat-chip-row *ngFor="let f of selectedFriends" (removed)="remove(f)">
+            {{ f.name | titlecase }}
+            <button matChipRemove [attr.aria-label]="'remove ' + f">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+          <input
+            placeholder="Add friend..."
+            #friendInput
+            [formControl]="friendCtrl"
+            [matChipInputFor]="chipGrid"
+            [matAutocomplete]="auto"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="add($event)"
+          />
+        </mat-chip-grid>
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="selected($event)"
+        >
+          <mat-option *ngFor="let f of friendsInput$ | async" [value]="f.id">
+            {{ f.name | titlecase }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </p>
+  </div>
+  <div>
+    <input
+      type="file"
+      class="file-input"
+      (change)="onFileSelected($event)"
+      #fileUpload
+    />
+
+    <button
+      mat-mini-fab
+      color="primary"
+      style="margin-left: 20px"
+      (click)="fileUpload.click()"
+    >
+      <mat-icon>receipt</mat-icon>
+    </button>
+  </div>
+  <br />
+
+  <div>
+    <button
+      mat-raised-button
+      type="button"
+      [routerLink]="['/home']"
+      style="width: 100px; margin-top: 15px"
+    >
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      type="button"
+      style="width: 100px; margin-top: 15px; margin-left: 15px"
+      [disabled]="selectedFriends.length <= 0"
+      (click)="onNext()"
+    >
+      Next
+    </button>
+  </div>
+</div>

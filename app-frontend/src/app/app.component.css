@@ -1,0 +1,17 @@
+.nav-button-first {
+  margin-left: 15px;
+  width: 110px;
+}
+.nav-button {
+  margin-left: 2px;
+  width: 110px;
+}
+
+.nav-button-end {
+  margin-right: 10px;
+  transition: none !important;
+  box-shadow: none !important;
+}
+.spacer {
+  flex: 1 1 auto;
+}

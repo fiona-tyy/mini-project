@@ -1,0 +1,98 @@
+<div class="container">
+  <h2>Hi {{ activeUser!.name | titlecase }}, here's your account summary</h2>
+
+  <button mat-raised-button color="primary" (click)="onNew()">
+    <mat-icon>add</mat-icon>
+    New Expense
+  </button>
+  <br />
+  <br />
+
+  <div *ngIf="friendsOutstand$ | async as friends">
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Total owed to you: </mat-panel-title>
+        <mat-panel-description>
+          ${{ amountOwed | number : "1.2-2" }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p *ngIf="amountOwed == 0" style="font-style: italic">
+        Awesome! No one owes you money!
+      </p>
+      <ul *ngFor="let friend of friends">
+        <li
+          *ngIf="friend.amount_outstanding! > 0"
+          (click)="getFriendExpenses(friend.id)"
+        >
+          {{ friend.name | titlecase }} owes you ${{
+            friend.amount_outstanding! | number : "1.2-2"
+          }}
+        </li>
+      </ul>
+    </mat-expansion-panel>
+    <mat-expansion-panel hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Total borrowed: </mat-panel-title>
+        <mat-panel-description>
+          ${{ amountBorrowed | number : "1.2-2" }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <p *ngIf="amountBorrowed == 0" style="font-style: italic">
+        Awesome! You do not owe anyone money!
+      </p>
+      <ul *ngFor="let friend of friends">
+        <li
+          *ngIf="friend.amount_outstanding! < 0"
+          (click)="getFriendExpenses(friend.id)"
+        >
+          You owe {{ friend.name | titlecase }} ${{
+            -friend.amount_outstanding! | number : "1.2-2"
+          }}
+        </li>
+      </ul>
+    </mat-expansion-panel>
+  </div>
+  <!-- 
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Total owed to you: </mat-panel-title>
+      <mat-panel-description>
+        ${{ amountOwed | number : "1.2-2" }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p *ngIf="amountOwed == 0" style="font-style: italic">
+      Awesome! No one owes you money!
+    </p>
+    <ul *ngFor="let friend of activeUser.friends">
+      <li
+        *ngIf="friend.amount_outstanding! < 0"
+        (click)="getDetails(friend.id)"
+      >
+        {{ friend.name | titlecase }} owes you ${{
+          -friend.amount_outstanding! | number : "1.2-2"
+        }}
+      </li>
+    </ul>
+  </mat-expansion-panel>
+  <mat-expansion-panel hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title> Total borrowed: </mat-panel-title>
+      <mat-panel-description>
+        ${{ amountBorrowed | number : "1.2-2" }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p *ngIf="amountBorrowed == 0" style="font-style: italic">
+      Awesome! You do not owe anyone money!
+    </p>
+    <ul *ngFor="let friend of activeUser.friends">
+      <li
+        *ngIf="friend.amount_outstanding! > 0"
+        (click)="getDetails(friend.id)"
+      >
+        You owe {{ friend.name | titlecase }} ${{
+          friend.amount_outstanding! | number : "1.2-2"
+        }}
+      </li>
+    </ul>
+  </mat-expansion-panel> -->
+</div>

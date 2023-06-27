@@ -1,0 +1,164 @@
+<div class="container-main">
+  <h3>Expense Details</h3>
+  <button
+    mat-button
+    color="primary"
+    [routerLink]="['/record', 'new', 'sharing']"
+  >
+    <mat-icon>arrow_back</mat-icon>
+    Back
+  </button>
+  <div>
+    <p>
+      Shared between <strong>you</strong> and:
+      <mat-chip *ngFor="let f of selectedFriends" style="margin: 2px">{{
+        f.name | titlecase
+      }}</mat-chip>
+    </p>
+    <hr />
+  </div>
+
+  <div class="container-content">
+    <form
+      [formGroup]="form"
+      (submit)="processForm()"
+      *ngIf="!isProcessing; else processing"
+    >
+      <mat-form-field class="container-form-field">
+        <mat-label>Description</mat-label>
+        <input type="text" matInput formControlName="description" />
+      </mat-form-field>
+      <mat-form-field class="container-form-field">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="container-form-field">
+        <mat-label>Who paid</mat-label>
+        <mat-select formControlName="who_paid" #payer>
+          <!-- <mat-option [value]="activeUser">You</mat-option> -->
+          <mat-option [value]="{ id: activeUser!.id, name: activeUser!.name }"
+            >You</mat-option
+          >
+          <!-- <mat-option *ngFor="let f of selectedFriends" [value]="f"> -->
+          <mat-option
+            *ngFor="let f of selectedFriends"
+            [value]="{ id: f.id, name: f.name }"
+          >
+            {{ f.name | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div>
+        <button
+          mat-raised-button
+          extended
+          color="primary"
+          style="
+            width: 100px;
+            align-items: center;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 2px;
+          "
+          type="button"
+          (click)="addLineItem()"
+        >
+          <mat-icon>add</mat-icon>
+          Add Item
+        </button>
+      </div>
+      <table formArrayName="line_items">
+        <tr
+          *ngFor="let it of itemArr.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <td>
+            <mat-form-field>
+              <mat-label>Item</mat-label>
+              <input matInput type="text" formControlName="item" />
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-label>Amount</mat-label>
+              <input matInput type="number" formControlName="amount" />
+            </mat-form-field>
+          </td>
+          <td>
+            <mat-checkbox
+              [value]="activeUser!.id"
+              (change)="onCheckboxChange($event, i)"
+            >
+              You
+            </mat-checkbox>
+          </td>
+
+          <td *ngFor="let user of selectedFriends">
+            <mat-checkbox
+              [value]="user.id"
+              (change)="onCheckboxChange($event, i)"
+            >
+              {{ user.name | titlecase }}
+            </mat-checkbox>
+          </td>
+          <td>
+            <button mat-icon-button type="button" (click)="deleteItem(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+      <br />
+      <mat-form-field class="container-form-field">
+        <mat-label>Service Charge</mat-label>
+        <input type="number" matInput formControlName="service_charge" />
+      </mat-form-field>
+      <mat-form-field class="container-form-field">
+        <mat-label>GST</mat-label>
+        <input type="number" matInput formControlName="gst" />
+      </mat-form-field>
+      <div>
+        <button
+          mat-raised-button
+          type="button"
+          [routerLink]="['/home']"
+          style="width: 100px"
+        >
+          Cancel
+        </button>
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+          style="width: 100px; margin-left: 20px"
+          [disabled]="invalidForm()"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<ng-template #processing>
+  <div
+    style="
+      text-align: center;
+      font-style: italic;
+      color: #7309d0;
+      font-size: 0.95em;
+      font-weight: 200;
+    "
+  >
+    <app-loading-spinner></app-loading-spinner>
+    <br />
+    <br />
+    Take a breather while we read your receipt
+  </div>
+</ng-template>

@@ -1,0 +1,201 @@
+<div class="center-it">
+  <div style="text-align: center" *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <div
+    style="border: solid brown; width: 80%; margin-bottom: 10px"
+    *ngIf="error"
+  >
+    <p style="color: brown; font-weight: 200; font-size: small">
+      Error: {{ error }}
+    </p>
+  </div>
+  <div *ngIf="!isLoading">
+    <form [formGroup]="loginForm" (submit)="login()" *ngIf="isLoginMode">
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Email Address</mat-label>
+          <input matInput formControlName="email" />
+        </mat-form-field>
+      </div>
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="form-pw-reset">Forgot your password?</div>
+
+      <div class="form-button">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="loginForm.invalid"
+        >
+          Login
+        </button>
+      </div>
+      <br />
+      <div style="vertical-align: middle">
+        <div class="horizontal-divider"></div>
+        <span style="color: rgb(130, 128, 128); font-size: smaller">OR</span>
+        <div class="horizontal-divider"></div>
+      </div>
+      <div class="form-button">
+        <button mat-raised-button color="basic" type="button">
+          <span style="vertical-align: middle"
+            ><img
+              src="/assets/images/google.png"
+              style="width: 25px; height: auto"
+          /></span>
+          <span style="vertical-align: middle"> Login with Google </span>
+        </button>
+      </div>
+    </form>
+    <form [formGroup]="signupForm" (submit)="signup()" *ngIf="!isLoginMode">
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Display Name</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+      </div>
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Email Address</mat-label>
+          <input matInput formControlName="email" />
+        </mat-form-field>
+      </div>
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hide ? 'password' : 'text'"
+            formControlName="password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="form-button">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="signupForm.invalid"
+        >
+          Sign Up
+        </button>
+      </div>
+    </form>
+
+    <div class="mode-component" *ngIf="isLoginMode">
+      Don't have an account?
+      <span (click)="switchMode()" style="color: blue">Sign up now</span>
+    </div>
+    <div class="mode-component" *ngIf="!isLoginMode">
+      Already have an account?
+      <span (click)="switchMode()" style="color: blue">Login</span>
+    </div>
+  </div>
+</div>
+
+<!-- 
+<div class="center-it">
+  <form [formGroup]="loginForm" (submit)="submitForm()">
+    <div class="form-component">
+      <mat-form-field
+        appearance="outline"
+        floatLabel="auto"
+        style="width: 250px; height: 60px"
+        hideRequiredMarker="true"
+      >
+        <mat-label>Email Address</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+    </div>
+    <div class="form-component">
+      <mat-form-field
+        appearance="outline"
+        floatLabel="auto"
+        style="width: 250px; height: 60px"
+        hideRequiredMarker="true"
+      >
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hide ? 'password' : 'text'"
+          formControlName="password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="hide = !hide"
+          [attr.aria-label]="'Hide password'"
+          [attr.aria-pressed]="hide"
+        >
+          <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="form-component">
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="loginForm.invalid"
+        style="width: 100px"
+      >
+        {{ isLoginMode ? "Login" : "Sign Up" }}
+      </button>
+    </div>
+    <div class="mode-component" *ngIf="isLoginMode">
+      Don't have an account?
+      <span (click)="switchMode()" style="color: blue">Sign up now</span>
+    </div>
+    <div class="mode-component" *ngIf="!isLoginMode">
+      Already have an account?
+      <span (click)="switchMode()" style="color: blue">Login</span>
+    </div>
+  </form>
+</div> -->

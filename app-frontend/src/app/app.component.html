@@ -1,0 +1,54 @@
+<mat-toolbar color="primary">
+  <span [routerLink]="['/']">My App</span>
+
+  <button
+    mat-flat-button
+    class="nav-button-first"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [routerLink]="['/home']"
+  >
+    <mat-icon>home</mat-icon>
+    Home
+  </button>
+  <button
+    mat-flat-button
+    class="nav-button"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [routerLink]="['/friends']"
+  >
+    <mat-icon>group</mat-icon>
+    Friends
+  </button>
+  <button
+    mat-flat-button
+    class="nav-button"
+    color="primary"
+    *ngIf="isAuthenticated"
+  >
+    <mat-icon>notifications</mat-icon>
+    Recent
+  </button>
+  <span class="spacer"></span>
+
+  <button
+    mat-mini-fab
+    class="nav-button-end mat-elevation-z0"
+    color="primary"
+    *ngIf="isAuthenticated"
+  >
+    <mat-icon>settings</mat-icon>
+  </button>
+  <button
+    mat-mini-fab
+    class="nav-button-end mat-elevation-z0"
+    color="primary"
+    *ngIf="isAuthenticated"
+    (click)="logout()"
+  >
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<router-outlet></router-outlet>

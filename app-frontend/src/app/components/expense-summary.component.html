@@ -1,0 +1,115 @@
+<div class="container-main" *ngIf="summary$ | async as s">
+  <div *ngIf="s[0].transaction_type == 'expense'">
+    <h3>
+      <span style="vertical-align: middle"> Expenses for </span>
+      <span style="vertical-align: middle"
+        >{{ s[0].description | uppercase }} on
+        {{ s[0].date | date : "d MMM yyyy" }}</span
+      >
+      <span
+        *ngIf="s[0].attachment == 'Y'"
+        style="vertical-align: middle; margin-left: 10px"
+      >
+        <a [href]="url" target="_blank">
+          <mat-icon>receipt</mat-icon>
+        </a>
+      </span>
+    </h3>
+    <p style="font-style: italic; font-size: smaller">
+      recorded by
+      <strong>
+        {{
+          s[0].recorded_by.id == activeUser!.id
+            ? "you"
+            : (s[0].recorded_by.name | titlecase)
+        }}
+      </strong>
+      on {{ s[0].recorded_date | date : "d MMM yyyy" }}
+    </p>
+
+    <div class="container-content">
+      <h4>
+        {{
+          s[0].who_paid.id == activeUser!.id
+            ? "You"
+            : (s[0].who_paid.name | titlecase)
+        }}
+        paid ${{ s[0].total_amount | number : "1.2-2" }}
+      </h4>
+
+      <ul *ngFor="let share of s">
+        <li>
+          {{
+            share.who_borrowed.id == activeUser!.id
+              ? "You"
+              : (share.who_borrowed.name | titlecase)
+          }}
+          owe
+          {{
+            share.who_paid.id == activeUser!.id
+              ? "you"
+              : (share.who_paid.name | titlecase)
+          }}
+          ${{ share.who_borrowed.share_amount | number : "1.2-2" }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div *ngIf="s[0].transaction_type == 'settlement'">
+    <h3>Repayment</h3>
+    <p style="font-style: italic; font-size: smaller">
+      recorded by
+      <strong>
+        {{
+          s[0].recorded_by.id == activeUser!.id
+            ? "you"
+            : (s[0].recorded_by.name | titlecase)
+        }}
+      </strong>
+      on {{ s[0].recorded_date | date }}
+    </p>
+    <div class="container-content">
+      <h4>
+        {{
+          s[0].who_paid.id == activeUser!.id
+            ? "You"
+            : (s[0].who_paid.name | titlecase)
+        }}
+        made a repayment of ${{ s[0].total_amount | number : "1.2-2" }} to
+        {{
+          s[0].who_borrowed.id == activeUser!.id
+            ? "you"
+            : (s[0].who_borrowed.name | titlecase)
+        }}
+      </h4>
+    </div>
+  </div>
+  <div>
+    <button
+      mat-raised-button
+      type="button"
+      [routerLink]="['/home']"
+      style="width: 100px; margin-top: 15px"
+    >
+      Home
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      style="width: 100px; margin-top: 15px; margin-left: 15px"
+      [routerLink]="['/record', 'new', 'sharing']"
+    >
+      New Expense
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      type="button"
+      style="width: 100px; margin-top: 15px; margin-left: 15px"
+      (click)="delete(s[0].transaction_id)"
+    >
+      Delete
+    </button>
+  </div>
+</div>

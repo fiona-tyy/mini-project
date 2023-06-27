@@ -1,0 +1,40 @@
+.center-it {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-component mat-form-field {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 250px;
+  height: 60px;
+}
+
+.form-button button {
+  margin-top: 20px;
+  width: 250px;
+}
+
+.form-pw-reset {
+  font-size: small;
+  color: grey;
+  font-weight: 200;
+  text-align: center;
+  margin-left: 3px;
+}
+
+.mode-component {
+  margin-top: 20px;
+}
+
+.horizontal-divider {
+  display: inline-block;
+  width: 100px;
+  border: 1px solid darkgray;
+  vertical-align: middle;
+  margin: 10px;
+}
