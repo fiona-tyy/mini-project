@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const matModules: any[] = [
   MatIconModule,
@@ -25,6 +26,7 @@ const matModules: any[] = [
   MatChipsModule,
   MatCheckboxModule,
   MatAutocompleteModule,
+  MatDialogModule,
 ];
 
 @NgModule({

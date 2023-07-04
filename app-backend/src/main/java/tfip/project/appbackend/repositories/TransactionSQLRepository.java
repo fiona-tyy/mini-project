@@ -27,45 +27,45 @@ public class TransactionSQLRepository {
             """;
     
     public static final String ADD_LOAN_OR_PAYMENT = """
-            INSERT INTO loans (transaction_id, lender_id, borrower_id, amount) VALUES (?,?,?,?)
+            INSERT INTO loans (transaction_id, lender_email, borrower_email, amount) VALUES (?,?,?,?)
             """;
     
     public static final String GET_AMOUNT_OUTSTANDING = """
-            SELECT t3.id as id, users.name as name, users.email as email, lent, borrowed, amount_outstanding from 
-            (SELECT IFNULL(t1.borrower_id ,t2.lender_id) as id, IFNULL(amount_lent,0) as lent, IFNULL(amount_borrowed,0) as borrowed,IFNULL(amount_lent,0)-IFNULL(amount_borrowed,0) as amount_outstanding
+            SELECT t3.email as email, users.name as name, lent, borrowed, amount_outstanding from 
+            (SELECT IFNULL(t1.borrower_email ,t2.lender_email) as email, IFNULL(amount_lent,0) as lent, IFNULL(amount_borrowed,0) as borrowed,IFNULL(amount_lent,0)-IFNULL(amount_borrowed,0) as amount_outstanding
             FROM
-            (SELECT borrower_id, SUM(amount) as amount_lent FROM loans WHERE lender_Id = ? group by borrower_id) t1
+            (SELECT borrower_email, SUM(amount) as amount_lent FROM loans WHERE lender_email = ? group by borrower_email) t1
             LEFT JOIN
-            (SELECT lender_id, SUM(amount) as amount_borrowed FROM loans WHERE borrower_Id = ? group by lender_id) t2
-            ON (t1.borrower_id = t2.lender_id)
+            (SELECT lender_email, SUM(amount) as amount_borrowed FROM loans WHERE borrower_email = ? group by lender_email) t2
+            ON (t1.borrower_email = t2.lender_email)
             UNION
-            SELECT IFNULL(t1.borrower_id ,t2.lender_id) as id, IFNULL(amount_lent,0) as lent, IFNULL(amount_borrowed,0) as borrowed, IFNULL(amount_lent,0)-IFNULL(amount_borrowed,0) as amount_outstanding
+            SELECT IFNULL(t1.borrower_email ,t2.lender_email) as email, IFNULL(amount_lent,0) as lent, IFNULL(amount_borrowed,0) as borrowed, IFNULL(amount_lent,0)-IFNULL(amount_borrowed,0) as amount_outstanding
             FROM
-            (SELECT borrower_id, SUM(amount) as amount_lent FROM loans WHERE lender_Id = ? group by borrower_id) t1
+            (SELECT borrower_email, SUM(amount) as amount_lent FROM loans WHERE lender_email = ? group by borrower_email) t1
             RIGHT JOIN
-            (SELECT lender_id, SUM(amount) as amount_borrowed FROM loans WHERE borrower_Id = ? group by lender_id) t2
-            ON (t1.borrower_id = t2.lender_id)) t3
-            LEFT JOIN users on t3.id = users.id;
+            (SELECT lender_email, SUM(amount) as amount_borrowed FROM loans WHERE borrower_email = ? group by lender_email) t2
+            ON (t1.borrower_email = t2.lender_email)) t3
+            LEFT JOIN users on t3.email = users.email;
             """;
   
     public final String GET_TRANSACTIONS_WITH_FRIEND = """
-            SELECT transaction_id, transaction_type, description, date, total_amount, lender_id, T1.name as lender_name, borrower_id, T2.name as borrower_name, amount 
+            SELECT transaction_id, transaction_type, description, date, total_amount, lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount 
             FROM loans JOIN transactions 
             ON loans.transaction_id=transactions.id
-            JOIN users AS T1 ON loans.lender_id=T1.id
-            JOIN users as T2 ON loans.borrower_id=T2.id
-            WHERE ((lender_id = ? and borrower_id = ?) OR (lender_id = ? and borrower_id = ?))
+            JOIN users AS T1 ON loans.lender_email=T1.email
+            JOIN users as T2 ON loans.borrower_email=T2.email
+            WHERE ((lender_email = ? and borrower_email = ?) OR (lender_email = ? and borrower_email = ?))
             ORDER BY date DESC
             LIMIT 20
             """;
    
     public final String GET_TRANSACTION_DETAIL_BY_ID = """
-            SELECT transactions.*,T3.name as recorder_name, lender_id, T1.name as lender_name, borrower_id, T2.name as borrower_name, amount 
+            SELECT transactions.*,T3.name as recorder_name, lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount 
             FROM loans JOIN transactions 
             ON loans.transaction_id=transactions.id 
-            JOIN users AS T1 ON loans.lender_id=T1.id
-            JOIN users AS T2 ON loans.borrower_id=T2.id
-            JOIN users AS T3 ON transactions.recorded_by=t3.id
+            JOIN users AS T1 ON loans.lender_email=T1.email
+            JOIN users AS T2 ON loans.borrower_email=T2.email
+            JOIN users AS T3 ON transactions.recorded_by=t3.email
             WHERE transaction_id = ?
             """;
 
@@ -82,23 +82,22 @@ public class TransactionSQLRepository {
         }
     }
 
-    public void addLoanOrPayment(String transactionId, String lenderId, String borrowerId, BigDecimal borrowedAmount) throws TransactionException{
+    public void addLoanOrPayment(String transactionId, String lenderEmail, String borrowerEmail, BigDecimal borrowedAmount) throws TransactionException{
 
-        int result = template.update(ADD_LOAN_OR_PAYMENT, new Object[]{transactionId, lenderId, borrowerId, borrowedAmount});
+        int result = template.update(ADD_LOAN_OR_PAYMENT, new Object[]{transactionId, lenderEmail, borrowerEmail, borrowedAmount});
 
     if(result < 1){
         throw new TransactionException("Error saving loan/payment");
     }
     }
 
-    public List<Friend> getOutstandingWithFriends(String userId){
+    public List<Friend> getOutstandingWithFriends(String userEmail){
         List<Friend> friends = new LinkedList<>();
-        SqlRowSet rs = template.queryForRowSet(GET_AMOUNT_OUTSTANDING, userId, userId, userId, userId);
+        SqlRowSet rs = template.queryForRowSet(GET_AMOUNT_OUTSTANDING, userEmail, userEmail, userEmail, userEmail);
         while(rs.next()){
             Friend friend = new Friend();
-            friend.setId(rs.getString("id"));
-            friend.setName(rs.getString("name"));
             friend.setEmail(rs.getString("email"));
+            friend.setName(rs.getString("name"));
             friend.setAmountOutstanding(rs.getBigDecimal("amount_outstanding"));
             friends.add(friend);
         }
@@ -117,11 +116,11 @@ public class TransactionSQLRepository {
             trans.setDate(rs.getLong("date"));
             trans.setTotalAmount(rs.getBigDecimal("total_amount"));
             User whoPaid = new User();
-            whoPaid.setId(rs.getString("lender_id"));
+            whoPaid.setEmail(rs.getString("lender_email"));
             whoPaid.setName(rs.getString("lender_name"));
             trans.setWhoPaid(whoPaid);
             ShareSplit borrower = new ShareSplit();
-            borrower.setId(rs.getString("borrower_id"));
+            borrower.setEmail(rs.getString("borrower_email"));
             borrower.setName(rs.getString("borrower_name"));
             borrower.setShareAmount(rs.getBigDecimal("amount"));
             trans.setWhoBorrowed(borrower);
@@ -144,15 +143,15 @@ public class TransactionSQLRepository {
                 trans.setRecordedDate(rs.getLong("recorded_date"));
                 trans.setAttachment(rs.getString("attachment"));
                 User recorder = new User();
-                recorder.setId(rs.getString("recorded_by"));
+                recorder.setEmail(rs.getString("recorded_by"));
                 recorder.setName(rs.getString("recorder_name"));
                 trans.setRecordedBy(recorder);
                 User whoPaid = new User();
-                whoPaid.setId(rs.getString("lender_id"));
+                whoPaid.setEmail(rs.getString("lender_email"));
                 whoPaid.setName(rs.getString("lender_name"));
                 trans.setWhoPaid(whoPaid);
                 ShareSplit share = new ShareSplit();
-                share.setId(rs.getString("borrower_id"));
+                share.setEmail(rs.getString("borrower_email"));
                 share.setName(rs.getString("borrower_name"));
                 share.setShareAmount(rs.getBigDecimal("amount"));
                 trans.setWhoBorrowed(share);

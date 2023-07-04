@@ -22,7 +22,7 @@
       <ul *ngFor="let friend of friends">
         <li
           *ngIf="friend.amount_outstanding! > 0"
-          (click)="getFriendExpenses(friend.id)"
+          (click)="getFriendExpenses(friend.email)"
         >
           {{ friend.name | titlecase }} owes you ${{
             friend.amount_outstanding! | number : "1.2-2"
@@ -43,7 +43,7 @@
       <ul *ngFor="let friend of friends">
         <li
           *ngIf="friend.amount_outstanding! < 0"
-          (click)="getFriendExpenses(friend.id)"
+          (click)="getFriendExpenses(friend.email)"
         >
           You owe {{ friend.name | titlecase }} ${{
             -friend.amount_outstanding! | number : "1.2-2"

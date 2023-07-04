@@ -1,0 +1,66 @@
+<h3 mat-dialog-title style="text-align: center">Record Payment</h3>
+<div mat-dialog-content style="text-align: center">
+  <p>
+    {{
+      data.whoPaid.email == activeUser!.email
+        ? "You"
+        : (data.whoPaid.name | titlecase)
+    }}
+    paid
+    {{
+      data.whoReceived.email == activeUser!.email
+        ? "you"
+        : (data.whoReceived.name | titlecase)
+    }}
+  </p>
+  <mat-form-field>
+    <mat-label>Amount</mat-label>
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="data.amount"
+      step="0.01"
+      required
+    />
+  </mat-form-field>
+
+  <span>
+    <input
+      type="file"
+      class="file-input"
+      (change)="onFileSelected($event)"
+      #fileUpload
+    />
+
+    <button
+      mat-mini-fab
+      color="primary"
+      style="margin-left: 20px"
+      (click)="fileUpload.click()"
+    >
+      <mat-icon>receipt</mat-icon>
+    </button>
+  </span>
+  <br />
+  <mat-form-field style="width: 280px; text-align: left">
+    <mat-label>Comment (Optional)</mat-label>
+    <input matInput type="text" [(ngModel)]="data.description" />
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="center">
+  <button
+    mat-raised-button
+    mat-dialog-close
+    style="margin-right: 10px; margin-bottom: 10px"
+  >
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    mat-dialog-close
+    (click)="recordPayment()"
+    style="margin-left: 10px; margin-bottom: 10px"
+  >
+    OK
+  </button>
+</div>

@@ -92,7 +92,9 @@ export class AddSharingWithComponent implements OnInit, OnDestroy {
 
   remove(friend: Friend) {
     console.info('removed: ', friend);
-    const index = this.selectedFriends.findIndex((fr) => fr.id == friend.id)!;
+    const index = this.selectedFriends.findIndex(
+      (fr) => fr.email == friend.email
+    )!;
     if (index >= 0) {
       this.selectedFriends.splice(index, 1);
     }
@@ -105,7 +107,7 @@ export class AddSharingWithComponent implements OnInit, OnDestroy {
     if (value) {
       // const friend: Friend = this.activeUser.friends!.find(
       const friend: Friend = this.friends!.find(
-        (friend) => friend.id == value
+        (friend) => friend.email == value
       )!;
       this.selectedFriends.push(friend);
     }
@@ -116,11 +118,11 @@ export class AddSharingWithComponent implements OnInit, OnDestroy {
 
   selected(event: MatAutocompleteSelectedEvent) {
     // console.info('mat autocomplete event>> ', event);
-    const selectedFriendId = event.option.value;
+    const selectedFriendEmail = event.option.value;
     // console.info('>> selected friend:  ', selectedFriendId);
     // const friend: Friend = this.activeUser.friends!.find(
     const friend: Friend = this.friends!.find(
-      (fr) => fr.id == selectedFriendId
+      (fr) => fr.email == selectedFriendEmail
     )!;
 
     this.selectedFriends.push(friend);

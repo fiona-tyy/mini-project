@@ -12,7 +12,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ActiveUser {
-    private String id;
     private String name;
     @JsonInclude(Include.NON_NULL)
     private String email;
@@ -21,4 +20,8 @@ public class ActiveUser {
     @JsonInclude(Include.NON_NULL)
     @JsonProperty("token_expiration_date")
     private Long tokenExpirationDate;
+    @JsonInclude(Include.NON_NULL)
+    @JsonProperty("google_token")
+    private String googleToken;
+    
 }

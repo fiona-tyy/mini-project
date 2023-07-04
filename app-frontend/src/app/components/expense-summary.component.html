@@ -19,7 +19,7 @@
       recorded by
       <strong>
         {{
-          s[0].recorded_by.id == activeUser!.id
+          s[0].recorded_by.email == activeUser!.email
             ? "you"
             : (s[0].recorded_by.name | titlecase)
         }}
@@ -30,7 +30,7 @@
     <div class="container-content">
       <h4>
         {{
-          s[0].who_paid.id == activeUser!.id
+          s[0].who_paid.email == activeUser!.email
             ? "You"
             : (s[0].who_paid.name | titlecase)
         }}
@@ -40,13 +40,13 @@
       <ul *ngFor="let share of s">
         <li>
           {{
-            share.who_borrowed.id == activeUser!.id
+            share.who_borrowed.email == activeUser!.email
               ? "You"
               : (share.who_borrowed.name | titlecase)
           }}
           owe
           {{
-            share.who_paid.id == activeUser!.id
+            share.who_paid.email == activeUser!.email
               ? "you"
               : (share.who_paid.name | titlecase)
           }}
@@ -61,7 +61,7 @@
       recorded by
       <strong>
         {{
-          s[0].recorded_by.id == activeUser!.id
+          s[0].recorded_by.email == activeUser!.email
             ? "you"
             : (s[0].recorded_by.name | titlecase)
         }}
@@ -71,13 +71,13 @@
     <div class="container-content">
       <h4>
         {{
-          s[0].who_paid.id == activeUser!.id
+          s[0].who_paid.email == activeUser!.email
             ? "You"
             : (s[0].who_paid.name | titlecase)
         }}
         made a repayment of ${{ s[0].total_amount | number : "1.2-2" }} to
         {{
-          s[0].who_borrowed.id == activeUser!.id
+          s[0].who_borrowed.email == activeUser!.email
             ? "you"
             : (s[0].who_borrowed.name | titlecase)
         }}

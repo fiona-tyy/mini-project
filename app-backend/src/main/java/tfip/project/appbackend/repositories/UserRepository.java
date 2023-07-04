@@ -19,38 +19,38 @@ public class UserRepository {
     private JdbcTemplate template;
 
     public static final String INSERT_USER = """
-            INSERT INTO users (id, name, email) values (?,?,?)
+            INSERT INTO users (email, name) values (?,?)
             """;
 
     public static final String FIND_USER_BY_EMAIL = """
             SELECT * FROM users WHERE email = ?
             """;
     
-    public static final String FIND_USER_BY_ID = """
-            SELECT * FROM users WHERE id = ?
-            """;
+    // public static final String FIND_USER_BY_ID = """
+    //         SELECT * FROM users WHERE id = ?
+    //         """;
     
     public static final String ADD_FRIEND = """
             INSERT INTO friends values (?,?)
             """;
 
     public static final String GET_FRIENDS = """
-            SELECT friend_id, users.name as friend_name, users.email as friend_email 
-            FROM friends JOIN users on friends.friend_id = users.id
-            WHERE friends.user_id = ?
+            SELECT friend_email, users.name as friend_name
+            FROM friends JOIN users on friends.friend_email = users.email
+            WHERE friends.user_email = ?
             """;
 
-    public static final String UPDATE_AMOUNT_OWED = """
-        UPDATE friends SET amount_outstanding = ? WHERE (user_id = ? AND friend_id = ?)
-        """;
+    // public static final String UPDATE_AMOUNT_OWED = """
+    //     UPDATE friends SET amount_outstanding = ? WHERE (user_email = ? AND friend_email = ?)
+    //     """;
             
-    public static final String GET_OUTSTANDING_WITH_FRIEND = """
-        SELECT amount_outstanding FROM friends
-        WHERE (user_id = ? AND friend_id = ?)
-        """;
+    // public static final String GET_OUTSTANDING_WITH_FRIEND = """
+    //     SELECT amount_outstanding FROM friends
+    //     WHERE (user_email = ? AND friend_email = ?)
+    //     """;
 
-    public void addNewUser(String id, String name, String email) throws UserException{
-        int result = template.update(INSERT_USER, new Object[]{ id, name, email});
+    public void addNewUser(String email, String name) throws UserException{
+        int result = template.update(INSERT_USER, new Object[]{ email, name});
  
         if (result<1){
          throw new UserException("Error in creating new user");
@@ -62,8 +62,9 @@ public class UserRepository {
         List<User> results = new LinkedList<>();
         while(rs.next()){
             User user = new User();
-            user.setId(rs.getString("id"));
+            user.setEmail(rs.getString("email"));
             user.setName(rs.getString("name"));
+            user.setPhoneNumber(rs.getString("phone_number"));
             results.add(user);
         }
 
@@ -73,38 +74,38 @@ public class UserRepository {
         return results.get(0);
     }
 
-    public User getUserById(String userId) throws UserException{
-        SqlRowSet rs = template.queryForRowSet(FIND_USER_BY_ID, userId);
-        List<User> results = new LinkedList<>();
-        while(rs.next()){
-            User user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            results.add(user);
-        }
+    // public User getUserById(String userId) throws UserException{
+    //     SqlRowSet rs = template.queryForRowSet(FIND_USER_BY_ID, userId);
+    //     List<User> results = new LinkedList<>();
+    //     while(rs.next()){
+    //         User user = new User();
+    //         user.setId(rs.getString("id"));
+    //         user.setName(rs.getString("name"));
+    //         results.add(user);
+    //     }
 
-        if(results.size() <= 0){
-            throw new UserException("No user with matching id found.");
-        }
-        return results.get(0);
-    }
+    //     if(results.size() <= 0){
+    //         throw new UserException("No user with matching id found.");
+    //     }
+    //     return results.get(0);
+    // }
 
-    public void addFriend(String firstUserId, String secondUserId) throws UserException{
+    public void addFriend(String firstUserEmail, String secondUserEmail) throws UserException{
 
-        Integer result = template.update(ADD_FRIEND, new Object[]{firstUserId, secondUserId});
+        Integer result = template.update(ADD_FRIEND, new Object[]{firstUserEmail, secondUserEmail});
         if(result < 1){
             throw new UserException("Error adding friend");
         }
     }
 
-    public List<Friend> getFriends(String userId){
-        SqlRowSet rs = template.queryForRowSet(GET_FRIENDS, userId);
+    public List<Friend> getFriends(String userEmail){
+        SqlRowSet rs = template.queryForRowSet(GET_FRIENDS, userEmail);
         List<Friend> friends = new LinkedList<>();
         while(rs.next()){
             Friend friend = new Friend();
-            friend.setId(rs.getString("friend_id"));
             friend.setName(rs.getString("friend_name"));
             friend.setEmail(rs.getString("friend_email"));
+            // friend.setPhoneNumber(rs.getString("phone_number"));
 
             friends.add(friend);
         }

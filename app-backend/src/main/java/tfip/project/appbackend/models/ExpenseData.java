@@ -20,7 +20,7 @@ public class ExpenseData {
     Long date;
     @JsonProperty("who_paid")
     @JsonInclude(Include.NON_NULL)
-    ActiveUser whoPaid;
+    User whoPaid;
     @JsonProperty("line_items")
     @JsonInclude(value = Include.NON_NULL, content = Include.NON_EMPTY)
     List<LineItem> lineItems;

@@ -51,45 +51,45 @@ public class TransactionController {
     public ResponseEntity<String> getLineItems(@RequestPart MultipartFile file){
 
         // send postrequest to Mindee
-        // try {
+        try {
             
-        //     TransactionData receipt = ocrSvc.callOCRApi(file);
-        //     ObjectMapper objectMapper = new ObjectMapper();
-        //     String resp = objectMapper.writeValueAsString(receipt);
-        //     return ResponseEntity.status(HttpStatus.OK)
-        //                     .body(resp);
-        // } catch (IOException e) {
-        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        //                     .body(Json.createObjectBuilder()
-        //                             .add("error", e.getMessage())
-        //                             .build().toString());
-        // }
+            ExpenseData receipt = ocrSvc.callOCRApi(file);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String resp = objectMapper.writeValueAsString(receipt);
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(resp);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Json.createObjectBuilder()
+                                    .add("error", e.getMessage())
+                                    .build().toString());
+        }
         
 
         //placeholder items -to be replaced
-        JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
+        // JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 
-        arrBuilder.add(Json.createObjectBuilder()
-                            .add("item","pork strips")
-                            .add("amount", 27.0));
+        // arrBuilder.add(Json.createObjectBuilder()
+        //                     .add("item","pork strips")
+        //                     .add("amount", 27.0));
 
-        arrBuilder.add(Json.createObjectBuilder()
-                            .add("item","breaded squid")
-                            .add("amount", 26.0));
+        // arrBuilder.add(Json.createObjectBuilder()
+        //                     .add("item","breaded squid")
+        //                     .add("amount", 26.0));
 
-        arrBuilder.add(Json.createObjectBuilder()
-                            .add("item","mango juice")
-                            .add("amount", 5.5));
+        // arrBuilder.add(Json.createObjectBuilder()
+        //                     .add("item","mango juice")
+        //                     .add("amount", 5.5));
 
-        JsonObject result = Json.createObjectBuilder()
-                                .add("description", "WALA")
-                                .add("date", 1685548800*1000)
-                                .add("service_charge", 6.20)
-                                .add("gst", 4.50)
-                                .add("line_items", arrBuilder)
-                                .build();
-        return ResponseEntity.status(HttpStatus.OK)
-                            .body(result.toString());
+        // JsonObject result = Json.createObjectBuilder()
+        //                         .add("description", "WALA")
+        //                         .add("date", 1685548800*1000)
+        //                         .add("service_charge", 6.20)
+        //                         .add("gst", 4.50)
+        //                         .add("line_items", arrBuilder)
+        //                         .build();
+        // return ResponseEntity.status(HttpStatus.OK)
+        //                     .body(result.toString());
         // to replace above
     }
 
@@ -140,7 +140,7 @@ public class TransactionController {
     }
 
     @PostMapping(path = "/settlement", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> postSettlement(@RequestBody String payload){
+    public ResponseEntity<String> recordSettlement(@RequestBody String payload){
         // System.out.println(">> settlement payload" + payload);
         ObjectMapper objectMapper = new ObjectMapper();
         SettlementData settlement;

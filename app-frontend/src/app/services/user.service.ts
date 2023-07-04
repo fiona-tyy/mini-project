@@ -14,6 +14,7 @@ import {
   throwError,
 } from 'rxjs';
 import { Friend, User, UserDTO } from '../model';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,8 @@ export class UserService {
   activeUser!: UserDTO | null;
   friends!: Friend[];
   friendsOutstanding!: Friend[];
-  constructor(private http: HttpClient) {}
+  expirationTimer!: any;
+  constructor(private http: HttpClient, private router: Router) {}
 
   signup(name: string, email: string, password: string) {
     const form = new HttpParams()
@@ -60,8 +62,70 @@ export class UserService {
         tap((result) => {
           this.user.next(result);
           this.activeUser = result;
+          this.autoLogout(result.token_expiration_date - new Date().getTime());
+          localStorage.setItem('userData', JSON.stringify(result));
         })
       );
+  }
+
+  loginWithGoogle(email: string, googleToken: string) {
+    const form = new HttpParams()
+      .set('email', email)
+      .set('googleToken', googleToken);
+    const headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    return this.http
+      .post<UserDTO>('/api/user/google-login', form.toString(), { headers })
+      .pipe(
+        tap((result) => {
+          this.user.next(result);
+          this.activeUser = result;
+          this.autoLogout(result.token_expiration_date - new Date().getTime());
+          localStorage.setItem('userData', JSON.stringify(result));
+          this.router.navigate(['/home']);
+        })
+      );
+  }
+
+  autoLogin() {
+    const userData: {
+      id: string;
+      name: string;
+      email: string;
+      token: string;
+      token_expiration_date: number;
+    } = JSON.parse(localStorage.getItem('userData')!);
+    if (!userData) {
+      return;
+    }
+    const loadedUser: UserDTO = {
+      name: userData.name,
+      email: userData.email,
+      token: userData.token,
+      token_expiration_date: userData.token_expiration_date,
+    };
+    if (loadedUser.token_expiration_date > new Date().getTime()) {
+      this.user.next(loadedUser);
+      this.activeUser = loadedUser;
+      this.autoLogout(loadedUser.token_expiration_date - new Date().getTime());
+    }
+
+    // const loadedUser = new User(
+    //   userData.email,
+    //   userData.id,
+    //   userData._token,
+    //   new Date(userData._tokenExpirationDate)
+    // );
+
+    // if (loadedUser.token) {
+    //   this.user.next(loadedUser);
+    //   const expirationDuration =
+    //     new Date(userData._tokenExpirationDate).getTime() -
+    //     new Date().getTime();
+    //   this.autoLogout(expirationDuration);
+    // }
   }
 
   // getActiveUser(email: string) {
@@ -94,6 +158,16 @@ export class UserService {
   logout() {
     this.user.next(null);
     this.activeUser = null;
+    localStorage.removeItem('userData');
+    if (this.expirationTimer) {
+      clearTimeout(this.expirationTimer);
+    }
+    this.expirationTimer = null;
+  }
+  autoLogout(expirationDuration: number) {
+    this.expirationTimer = setTimeout(() => {
+      this.logout;
+    }, expirationDuration);
   }
 
   private handleError(errorRes: HttpErrorResponse) {

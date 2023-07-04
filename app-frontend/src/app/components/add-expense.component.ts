@@ -109,7 +109,10 @@ export class AddExpenseComponent implements OnInit {
     console.info('>>form value:', this.form.value);
     const expense = this.form.value as ExpenseData;
     expense.date = new Date(this.form.value['date']).getTime();
-    let user: User = { id: this.activeUser!.id, name: this.activeUser!.name };
+    let user: User = {
+      email: this.activeUser!.email,
+      name: this.activeUser!.name,
+    };
     expense.recorded_by = user;
     expense.recorded_date = new Date().getTime();
     if (!!this.expenseSvc.file) {

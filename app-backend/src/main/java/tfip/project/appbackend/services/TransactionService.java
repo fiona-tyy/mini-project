@@ -24,7 +24,6 @@ import tfip.project.appbackend.models.ActiveUser;
 import tfip.project.appbackend.models.ExpenseData;
 import tfip.project.appbackend.models.ExpenseProcessed;
 import tfip.project.appbackend.models.Friend;
-import tfip.project.appbackend.repositories.AccountBalanceRepository;
 import tfip.project.appbackend.repositories.ReceiptRepository;
 import tfip.project.appbackend.repositories.TransactionRepository;
 import tfip.project.appbackend.repositories.TransactionSQLRepository;
@@ -35,9 +34,6 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository transRepo;
-
-    // @Autowired
-    // private AccountBalanceRepository accBalRepo;
 
     @Autowired
     private UserRepository userRepo;
@@ -75,16 +71,16 @@ public class TransactionService {
                 if(!sharing.contains(str)){
                     sharing.add(str);
                     ShareSplit share = new ShareSplit();
-                    share.setId(str);
+                    share.setEmail(str);
                     share.setShareAmount(average);
                     User user;
-                    user = userRepo.getUserById(str);
+                    user = userRepo.getUserByEmail(str);
                     share.setName(user.getName());
                     sharesSplit.add(share);
                    
                 } else {
                     for(ShareSplit s : sharesSplit){
-                        if(s.getId().equals(str)){
+                        if(s.getEmail().equals(str)){
                             s.setShareAmount(s.getShareAmount().add(average));
                         }
                     }
@@ -109,12 +105,12 @@ public class TransactionService {
         //add transaction to Mongo
         // transRepo.logTransaction(processedTrans);
         
-        transSQLRepo.addTransaction(processedTrans.getTransactionId(), processedTrans.getTransactionType(), processedTrans.getDescription(), processedTrans.getDate(), processedTrans.getTotalAmount(), processedTrans.getRecordedBy().getId(), processedTrans.getRecordedDate(), processedTrans.getAttachment());
+        transSQLRepo.addTransaction(processedTrans.getTransactionId(), processedTrans.getTransactionType(), processedTrans.getDescription(), processedTrans.getDate(), processedTrans.getTotalAmount(), processedTrans.getRecordedBy().getEmail(), processedTrans.getRecordedDate(), processedTrans.getAttachment());
 
         for (ShareSplit s : sharesSplit){
 
-            if(!s.getId().equals( trans.getWhoPaid().getId())){
-                transSQLRepo.addLoanOrPayment(transactionId, trans.getWhoPaid().getId(), s.getId(), s.getShareAmount());
+            if(!s.getEmail().equals( trans.getWhoPaid().getEmail())){
+                transSQLRepo.addLoanOrPayment(transactionId, trans.getWhoPaid().getEmail(), s.getEmail(), s.getShareAmount());
                 }
             }
         return processedTrans;
@@ -122,22 +118,24 @@ public class TransactionService {
 
     @Transactional(rollbackFor = TransactionException.class)
     public SettlementData recordSettlement(SettlementData payment) throws TransactionException{
+
+        
         String transactionId  = UUID.randomUUID().toString().substring(0, 8);
         payment.setTransactionId(transactionId);
         payment.setTransactionType("settlement");
-        transSQLRepo.addTransaction(transactionId, payment.getTransactionType(), payment.getDescription(), payment.getDate(), payment.getRepaymentAmount(), payment.getRecordedBy().getId(), payment.getRecordedDate(), payment.getAttachment());
-        transSQLRepo.addLoanOrPayment(transactionId, payment.getDebtor().getId(), payment.getLender().getId(), payment.getRepaymentAmount());
+        transSQLRepo.addTransaction(transactionId, payment.getTransactionType(), payment.getDescription(), payment.getDate(), payment.getRepaymentAmount(), payment.getRecordedBy().getEmail(), payment.getRecordedDate(), payment.getAttachment());
+        transSQLRepo.addLoanOrPayment(transactionId, payment.getWhoPaid().getEmail(), payment.getWhoReceived().getEmail(), payment.getRepaymentAmount());
 
         return payment;
     }
 
-    public List<Friend> getOutstandingWithFriends(String userId){
+    public List<Friend> getOutstandingWithFriends(String userEmail){
 
-        return transSQLRepo.getOutstandingWithFriends(userId);
+        return transSQLRepo.getOutstandingWithFriends(userEmail);
     }
 
-    public List<Transaction> getTransactionsWithFriend(String userId, String friendId){
-        return transSQLRepo.getTransactionsWithFriend(userId, friendId);
+    public List<Transaction> getTransactionsWithFriend(String userEmail, String friendEmail){
+        return transSQLRepo.getTransactionsWithFriend(userEmail, friendEmail);
     }
 
     public List<Transaction> getTransactionDetailById(String transactionId){

@@ -1,7 +1,6 @@
 package tfip.project.appbackend.services;
 
 import java.io.StringReader;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -19,10 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
-import tfip.project.appbackend.models.Friend;
-import tfip.project.appbackend.models.User;
 import tfip.project.appbackend.models.ActiveUser;
-import tfip.project.appbackend.repositories.TransactionSQLRepository;
+import tfip.project.appbackend.models.Friend;
 import tfip.project.appbackend.repositories.UserRepository;
 
 @Service
@@ -31,6 +27,7 @@ public class UserService {
     private String SIGNUP_AUTH_URL="https://identitytoolkit.googleapis.com/v1/accounts:signUp";
 
     private String LOGIN_AUTH_URL="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword";
+    private String GOOGLE_LOGIN_URL="https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp";
 
     @Value ("${FIREBASE_API_KEY}")
     private String API_KEY; 
@@ -38,11 +35,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepo;
 
-    @Autowired
-    private TransactionSQLRepository transSQLRepo;
-
-
-    public ActiveUser signupWithEmail(String name, String email, String password) throws HttpClientErrorException, UserException{
+    public ActiveUser signupWithEmail(String name, String email, String password, String phoneNumber) throws HttpClientErrorException, UserException{
 
         String url = UriComponentsBuilder
                         .fromUriString(SIGNUP_AUTH_URL)
@@ -69,12 +62,11 @@ public class UserService {
         JsonObject obj = reader.readObject();
 
         
-        String uid = obj.getString("localId");
+        // String uid = obj.getString("localId");
 
-        userRepo.addNewUser(uid, name, email);
+        userRepo.addNewUser( email, name);
         
         ActiveUser user = new ActiveUser();
-        user.setId(uid);
         user.setName(name);
         user.setEmail(email);
         user.setToken(obj.getString("idToken"));
@@ -109,7 +101,7 @@ public class UserService {
         ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
 
         if(resp.getStatusCode() != HttpStatusCode.valueOf(200)){
-
+            // to write exception handling
         }
 
         String payload = resp.getBody();
@@ -117,11 +109,10 @@ public class UserService {
         JsonReader reader = Json.createReader(new StringReader(payload));
         JsonObject obj = reader.readObject();
 
-        String uid = obj.getString("localId");
+        // String uid = obj.getString("localId");
         Long expirationDate = Instant.now().toEpochMilli() + (Long.parseLong( obj.getString("expiresIn"))*1000);
 
         ActiveUser user = new ActiveUser();
-        user.setId(uid);
         user.setName(obj.getString("displayName"));
         user.setEmail(email);
         user.setToken(obj.getString("idToken"));
@@ -130,14 +121,61 @@ public class UserService {
         return user;
     }
 
-    public void addFriend(String userId, String email) throws UserException{
+    public ActiveUser loginWithGoogle(String email, String googleToken) throws UserException{
 
-        User friend = userRepo.getUserByEmail(email);
-        userRepo.addFriend(userId, friend.getId());
+        String url = UriComponentsBuilder
+                        .fromUriString(GOOGLE_LOGIN_URL)
+                        .queryParam("key", API_KEY)
+                        .toUriString();
+
+        JsonObject jsonObj = Json.createObjectBuilder()
+                                .add("requestUri", "http://localhost")
+                                .add("postBody", "id_token=" + googleToken + "&providerId=google.com")
+                                .add("returnIdpCredential", true)
+                                .add("returnSecureToken", true)
+                                .build();
+
+
+        RequestEntity<String> req = RequestEntity.post(url)
+                                                .body(jsonObj.toString());
+        
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
+
+        if(resp.getStatusCode() != HttpStatusCode.valueOf(200)){
+            // to write exception handling
+        }
+
+        String payload = resp.getBody();
+        // System.out.println(">>> payload from firebase login:" + payload);
+        JsonReader reader = Json.createReader(new StringReader(payload));
+        JsonObject obj = reader.readObject();
+
+        Long expirationDate = Instant.now().toEpochMilli() + (Long.parseLong( obj.getString("expiresIn"))*1000);
+
+        ActiveUser user = new ActiveUser();
+        user.setName(obj.getString("displayName"));
+        user.setEmail(email);
+        user.setToken(obj.getString("idToken"));
+        user.setTokenExpirationDate(expirationDate);
+        user.setGoogleToken(googleToken);
+
+        //check if email in users database
+        try {
+            userRepo.getUserByEmail(email);
+        } catch (UserException e) {
+            userRepo.addNewUser(email, user.getName());
+        }
+        return user;
     }
 
-    public List<Friend> getFriends(String userId){
-        return this.userRepo.getFriends(userId);
+    public void addFriend(String userEmail, String friendEmail) throws UserException{
+
+        userRepo.addFriend(userEmail, friendEmail);
+    }
+
+    public List<Friend> getFriends(String userEmail){
+        return this.userRepo.getFriends(userEmail);
     }
 
 }

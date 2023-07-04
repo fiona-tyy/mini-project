@@ -23,13 +23,15 @@ public class SettlementData {
     @JsonInclude(Include.NON_NULL)
     String description;
     Long date;
-    User debtor;
+    @JsonProperty("who_paid")
+    User whoPaid;
     @JsonProperty("recorded_by")
     User recordedBy;
     @JsonProperty("recorded_date")
     Long recordedDate;
     @JsonProperty("repayment_amount")
     BigDecimal repaymentAmount;
-    User lender;
+    @JsonProperty("who_received")
+    User whoReceived;
     String attachment;
 }

@@ -13,9 +13,8 @@ import lombok.ToString;
 @ToString
 public class Friend {
 
-    private String id;
-    private String name;
     private String email;
+    private String name;
     @JsonProperty("amount_outstanding")
     private BigDecimal amountOutstanding;
     // +ve means owe friend, -ve means being owed by friend

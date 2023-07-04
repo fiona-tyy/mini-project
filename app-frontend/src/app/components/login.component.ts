@@ -4,6 +4,12 @@ import { ExpenseService } from '../services/expense.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { User } from '../model';
+import {
+  GoogleLoginProvider,
+  SocialAuthService,
+  SocialUser,
+} from '@abacritt/angularx-social-login';
+import { exhaustMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,25 +21,43 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private expenseSvc: ExpenseService,
     private userSvc: UserService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: SocialAuthService
   ) {}
 
   hide = true;
   isLoginMode = true;
   isLoading = false;
-  // activeUser = '4';
+
   activeUser!: User;
   loginForm!: FormGroup;
   signupForm!: FormGroup;
+  socialUser!: SocialUser;
+  isLoggedin?: boolean;
 
   error: string | null = null;
 
   ngOnInit(): void {
     this.loginForm = this.createLoginForm();
     this.signupForm = this.createSignupForm();
-    if (this.isLoginMode) {
-    } else {
-    }
+
+    // this.authService.authState.subscribe((user) => {
+    //   this.socialUser = user;
+    //   this.isLoggedin = user != null;
+    //   console.log(this.socialUser);
+    // });
+
+    let user$ = this.authService.authState
+      .pipe(
+        tap((user) => {
+          this.socialUser = user;
+          console.log(this.socialUser);
+        }),
+        exhaustMap((user) =>
+          this.userSvc.loginWithGoogle(user.email, user.idToken)
+        )
+      )
+      .subscribe();
   }
 
   login() {
@@ -56,18 +80,6 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
       },
     });
-    // this.userSvc
-    //   .login(email, password)
-    //   .then((result) => {
-    //     //TO AMEND
-    //     (this.activeUser = result),
-    //       (this.userSvc.activeUser = result),
-    //       (this.isLoading = false),
-    //       this.router.navigate(['/', this.activeUser.id, 'home']);
-    //   })
-    //   .catch((err) => {
-    //     (this.isLoading = false), alert(err.error.message);
-    //   });
   }
 
   signup() {
@@ -95,25 +107,40 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  // submitForm() {
-  //   //make call to user service
-  //   if (this.isLoginMode) {
-  //     const userEmail = this.loginForm.value['email'];
-  //     this.userSvc.getActiveUser(userEmail).then((result) => {
-  //       (this.activeUser = result),
-  //         (this.userSvc.activeUser = result),
-  //         this.router.navigate(['/', this.activeUser.id, 'home']);
-  //     });
-
-  //     // this.userSvc.activeUser = this.activeUser;
-  //     // this.router.navigate(['/', this.activeUser, 'home']);
-  //   } else {
-  //     alert('Account created successfully. Please login.');
-  //   }
-  // }
-
   switchMode() {
     this.isLoginMode = !this.isLoginMode;
+  }
+
+  loginWithGoogle() {
+    // let user$ = this.authService.authState.pipe(
+    //   tap((user) => {
+    //     this.socialUser = user;
+    //     console.log(this.socialUser);
+    //   }),
+    //   exhaustMap((user) =>
+    //     this.userSvc.loginWithGoogle(user.email, user.idToken)
+    //   )
+    // );
+    // this.authService.authState.subscribe((user) => {
+    //   this.socialUser = user;
+    //   this.isLoggedin = user != null;
+    //   console.log(this.socialUser);
+    // });
+    // // let user$ = this.userSvc.loginWithGoogle(
+    // //   this.socialUser.email,
+    // //   this.socialUser.idToken
+    // // );
+    // user$.subscribe({
+    //   next: (data) => {
+    //     this.isLoading = false;
+    //     this.router.navigate(['/home']);
+    //   },
+    //   error: (error) => {
+    //     console.info(error);
+    //     alert(error);
+    //     this.isLoading = false;
+    //   },
+    // });
   }
 
   private createLoginForm() {

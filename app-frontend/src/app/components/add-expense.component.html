@@ -42,13 +42,14 @@
         <mat-label>Who paid</mat-label>
         <mat-select formControlName="who_paid" #payer>
           <!-- <mat-option [value]="activeUser">You</mat-option> -->
-          <mat-option [value]="{ id: activeUser!.id, name: activeUser!.name }"
+          <mat-option
+            [value]="{ email: activeUser!.email, name: activeUser!.name }"
             >You</mat-option
           >
           <!-- <mat-option *ngFor="let f of selectedFriends" [value]="f"> -->
           <mat-option
             *ngFor="let f of selectedFriends"
-            [value]="{ id: f.id, name: f.name }"
+            [value]="{ email: f.email, name: f.name }"
           >
             {{ f.name | titlecase }}
           </mat-option>
@@ -92,7 +93,7 @@
           </td>
           <td>
             <mat-checkbox
-              [value]="activeUser!.id"
+              [value]="activeUser!.email"
               (change)="onCheckboxChange($event, i)"
             >
               You
@@ -101,7 +102,7 @@
 
           <td *ngFor="let user of selectedFriends">
             <mat-checkbox
-              [value]="user.id"
+              [value]="user.email"
               (change)="onCheckboxChange($event, i)"
             >
               {{ user.name | titlecase }}

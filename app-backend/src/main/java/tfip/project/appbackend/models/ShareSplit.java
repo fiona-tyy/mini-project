@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ShareSplit {
-    private String id;
+    private String email;
     private String name;
     @JsonProperty("share_amount")
     private BigDecimal shareAmount;

@@ -1,5 +1,6 @@
 package tfip.project.appbackend.controllers;
 
+import java.io.Console;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +38,10 @@ public class UserController {
         String name = form.getFirst("name").toLowerCase();
         String email = form.getFirst("email").toLowerCase();
         String password = form.getFirst("password");
+        String phoneNumber = form.getFirst("phoneNumber");
 
         try {
-            ActiveUser user = userSvc.signupWithEmail(name, email, password);
+            ActiveUser user = userSvc.signupWithEmail(name, email, password, phoneNumber);
         
             ObjectMapper objectMapper = new ObjectMapper();
             String resp = objectMapper.writeValueAsString(user);
@@ -79,17 +81,41 @@ public class UserController {
                                     .body(ex.getResponseBodyAsString());
       
         } catch (JsonProcessingException e) {
-            
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                     .body(Json.createObjectBuilder().add("error", Json.createObjectBuilder().add("message", e.getMessage())).build().toString());
         }
     }
 
-    @GetMapping(path = "/{userId}/add-friend")
-    public ResponseEntity<String> addFriendByEmail(@PathVariable String userId, @RequestParam(required = true) String email){
+    @PostMapping (path = "/google-login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public ResponseEntity<String> loginByGoogle(@RequestBody MultiValueMap<String,String> form){
+        System.out.println("google login method called");
+        String email = form.getFirst("email").toLowerCase();
+        // String name = form.getFirst("name").toLowerCase();
+        String googleToken = form.getFirst("googleToken");
+        try {
+            ActiveUser user =this.userSvc.loginWithGoogle(email, googleToken);
+            ObjectMapper objectMapper = new ObjectMapper();
+            String resp = objectMapper.writeValueAsString(user);
+    
+            return ResponseEntity.status(HttpStatus.CREATED)
+                                    .body(resp);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                    .body(Json.createObjectBuilder().add("error", Json.createObjectBuilder().add("message", e.getMessage())).build().toString());
+        } 
+
+        //get google token
+        //send to firebase, receive localid
+        //check if email in user repo, otherwise add to user repo
+        //return user data with localid, token, tokenexpiration etc
+        //on frontend, navigate to home
+    }
+
+    @GetMapping(path = "/{userEmail}/add-friend")
+    public ResponseEntity<String> addFriendByEmail(@PathVariable String userEmail, @RequestParam(required = true) String email){
 
         try{
-            this.userSvc.addFriend(userId, email);
+            this.userSvc.addFriend(userEmail, email);
         } catch (UserException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(Json.createObjectBuilder()
@@ -102,9 +128,9 @@ public class UserController {
 
     }
 
-    @GetMapping(path = "/{userId}/friends")
-    public ResponseEntity<String> getFriendsOfUser(@PathVariable String userId){
-        List<Friend> friends = userSvc.getFriends(userId);
+    @GetMapping(path = "/{userEmail}/friends")
+    public ResponseEntity<String> getFriendsOfUser(@PathVariable String userEmail){
+        List<Friend> friends = userSvc.getFriends(userEmail);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String resp = objectMapper.writeValueAsString(friends);

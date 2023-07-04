@@ -26,15 +26,15 @@ export interface ExpenseProcessed {
 }
 
 export interface SettlementData {
-  transaction_type: string;
-  transaction_id: string;
+  transaction_type?: string;
+  transaction_id?: string;
   description: string;
   date: number;
   recorded_by: User;
   recorded_date: number;
   repayment_amount: number;
-  debtor: User;
-  lender: User;
+  who_paid: User;
+  who_received: User;
   attachment: string;
 }
 
@@ -53,21 +53,19 @@ export interface LineItem {
 }
 
 export interface ShareSplit {
-  id: string;
+  email: string;
   name: string;
   share_amount: number;
 }
 
 export interface User {
-  id: string;
+  email: string;
   name: string;
-  // friends?: Friend[];
 }
 
 export interface Friend {
-  id: string;
-  name: string;
   email: string;
+  name: string;
   amount_outstanding: number;
 }
 
@@ -85,9 +83,9 @@ export interface Transaction {
 }
 
 export interface UserDTO {
-  id: string;
   name: string;
   email: string;
   token: string;
   token_expiration_date: number;
+  google_token?: string;
 }

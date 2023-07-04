@@ -63,15 +63,15 @@
         <span style="color: rgb(130, 128, 128); font-size: smaller">OR</span>
         <div class="horizontal-divider"></div>
       </div>
-      <div class="form-button">
-        <button mat-raised-button color="basic" type="button">
-          <span style="vertical-align: middle"
-            ><img
-              src="/assets/images/google.png"
-              style="width: 25px; height: auto"
-          /></span>
-          <span style="vertical-align: middle"> Login with Google </span>
-        </button>
+      <br />
+      <div style="text-align: center">
+        <asl-google-signin-button
+          type="standard"
+          size="medium"
+          shape="pill"
+          width="260"
+          logo_alignment="center"
+        ></asl-google-signin-button>
       </div>
     </form>
     <form [formGroup]="signupForm" (submit)="signup()" *ngIf="!isLoginMode">

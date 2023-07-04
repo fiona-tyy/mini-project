@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   userSub$!: Subscription;
   friendSub$!: Subscription;
   friendsOutstand$!: Observable<Friend[]>;
+  outstanding$!: Subscription;
   // friends!: Friend[];
 
   constructor(
@@ -27,22 +28,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // this.userSub$ = this.userSvc.user.subscribe(
-    //   (user) => (this.activeUser = user!)
-    // );
+    this.userSub$ = this.userSvc.user.subscribe(
+      (user) => (this.activeUser = user!)
+    );
 
-    this.activeUser = this.userSvc.activeUser;
+    // this.activeUser = this.userSvc.activeUser;
     if (!!this.activeUser) {
       console.info('from homepage- activeuser: ', this.activeUser);
 
       //gets outstanding regardless of whether friends
-      this.friendsOutstand$ = this.expenseSvc.getOutstandingWithFriends(
-        this.activeUser.id
-      );
+      this.friendsOutstand$ = this.expenseSvc.getOutstandingWithFriends();
       this.friendSub$ = this.friendsOutstand$
         .pipe(
           tap((result) => {
-            this.userSvc.friendsOutstanding = result;
+            // this.userSvc.friendsOutstanding = result;
             // console.info(this.userSvc.friends);
             result.forEach((f) => {
               if (f.amount_outstanding > 0) {
@@ -57,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       //friend-1
       firstValueFrom(
-        this.userSvc.getFriendsOfActiveUser(this.activeUser!.id)
+        this.userSvc.getFriendsOfActiveUser(this.activeUser!.email)
       ).then((result) => (this.userSvc.friends = result));
     }
   }
@@ -66,15 +65,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/record', 'new', 'sharing']);
   }
 
-  getFriendExpenses(friendId: string) {
-    const queryParams: Params = { friendId: friendId };
+  getFriendExpenses(friendEmail: string) {
+    const queryParams: Params = { friendEmail: friendEmail };
     this.router.navigate(['/records'], {
       queryParams,
     });
   }
 
   ngOnDestroy(): void {
-    // this.userSub$.unsubscribe();
+    this.userSub$.unsubscribe();
     //unsubscribe from friendSub$
     this.friendSub$.unsubscribe();
   }
