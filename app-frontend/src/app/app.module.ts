@@ -1,9 +1,16 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import {
+  GoogleLoginProvider,
+  GoogleSigninButtonModule,
+  SocialAuthServiceConfig,
+  SocialLoginModule,
+} from '@abacritt/angularx-social-login';
 
 import { AppComponent } from './app.component';
 import { MaterialModule } from './material.module';
@@ -19,12 +26,6 @@ import { ExpensesFriendComponent } from './components/expenses-friend.component'
 import { FriendsComponent } from './components/friends.component';
 import { ExpenseService } from './services/expense.service';
 import { UserService } from './services/user.service';
-import {
-  GoogleLoginProvider,
-  GoogleSigninButtonModule,
-  SocialAuthServiceConfig,
-  SocialLoginModule,
-} from '@abacritt/angularx-social-login';
 import { AuthGuard } from './components/auth.guard';
 
 const appRoutes: Routes = [
@@ -35,7 +36,7 @@ const appRoutes: Routes = [
     title: 'Home',
     canActivate: [AuthGuard()],
   },
-  { path: 'records/:friendId', component: RecordsComponent },
+  // { path: 'records/:friendId', component: RecordsComponent },
   { path: 'records', component: ExpensesFriendComponent },
   {
     path: 'record/new/sharing',
@@ -94,6 +95,12 @@ const appRoutes: Routes = [
     MaterialModule,
     SocialLoginModule,
     GoogleSigninButtonModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
   providers: [
     ExpenseService,
