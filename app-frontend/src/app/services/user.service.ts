@@ -9,7 +9,9 @@ import {
   BehaviorSubject,
   Subject,
   catchError,
+  exhaustMap,
   firstValueFrom,
+  take,
   tap,
   throwError,
 } from 'rxjs';
@@ -19,7 +21,7 @@ import { Router } from '@angular/router';
 @Injectable()
 export class UserService {
   user = new BehaviorSubject<UserDTO | null>(null);
-  friendsOfUser = new Subject<Friend[]>();
+  // friendsOfUser = new Subject<Friend[]>();
   activeUser!: UserDTO | null;
   friends!: Friend[];
   friendsOutstanding!: Friend[];
@@ -146,13 +148,26 @@ export class UserService {
   //   return this.http.get<Friend[]>('/api/user/' + userId + '/friends');
   // }
 
-  getFriendsOfActiveUser(userId: String) {
-    return this.http.get<Friend[]>('/api/user/' + userId + '/friends');
+  getFriendsOfActiveUser() {
+    return this.user.pipe(
+      take(1),
+      exhaustMap((user) => {
+        return this.http.get<Friend[]>('/api/user/' + user?.email + '/friends');
+      })
+    );
   }
 
-  addFriend(userId: string, email: string) {
+  addFriend(email: string) {
     const params = new HttpParams().set('email', email);
-    return this.http.get('/api/user/' + userId + '/add-friend', { params });
+    return this.user.pipe(
+      take(1),
+      exhaustMap((user) => {
+        return this.http.get('/api/user/' + user?.email + '/add-friend', {
+          params,
+        });
+      })
+    );
+    // return this.http.get('/api/user/' + userEmail + '/add-friend', { params });
   }
 
   logout() {

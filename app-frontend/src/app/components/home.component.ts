@@ -55,9 +55,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         .subscribe();
 
       //friend-1
-      firstValueFrom(
-        this.userSvc.getFriendsOfActiveUser(this.activeUser!.email)
-      ).then((result) => (this.userSvc.friends = result));
+      // firstValueFrom(
+      //   this.userSvc.getFriendsOfActiveUser(this.activeUser!.email)
+      // ).then((result) => (this.userSvc.friends = result));
     }
   }
 

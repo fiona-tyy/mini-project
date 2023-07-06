@@ -38,16 +38,10 @@ public class UserRepository {
             SELECT friend_email, users.name as friend_name
             FROM friends JOIN users on friends.friend_email = users.email
             WHERE friends.user_email = ?
+            ORDER BY friend_name ASC
             """;
 
-    // public static final String UPDATE_AMOUNT_OWED = """
-    //     UPDATE friends SET amount_outstanding = ? WHERE (user_email = ? AND friend_email = ?)
-    //     """;
-            
-    // public static final String GET_OUTSTANDING_WITH_FRIEND = """
-    //     SELECT amount_outstanding FROM friends
-    //     WHERE (user_email = ? AND friend_email = ?)
-    //     """;
+  
 
     public void addNewUser(String email, String name) throws UserException{
         int result = template.update(INSERT_USER, new Object[]{ email, name});
@@ -74,21 +68,6 @@ public class UserRepository {
         return results.get(0);
     }
 
-    // public User getUserById(String userId) throws UserException{
-    //     SqlRowSet rs = template.queryForRowSet(FIND_USER_BY_ID, userId);
-    //     List<User> results = new LinkedList<>();
-    //     while(rs.next()){
-    //         User user = new User();
-    //         user.setId(rs.getString("id"));
-    //         user.setName(rs.getString("name"));
-    //         results.add(user);
-    //     }
-
-    //     if(results.size() <= 0){
-    //         throw new UserException("No user with matching id found.");
-    //     }
-    //     return results.get(0);
-    // }
 
     public void addFriend(String firstUserEmail, String secondUserEmail) throws UserException{
 
@@ -112,22 +91,4 @@ public class UserRepository {
         return friends;
     }
     
-    // public void updateOutstanding(BigDecimal amount, String userId, String friendId) throws UserException{
-        
-    //     BigDecimal currentOutstanding = getOutstandingWithFriend(userId, friendId);
-    //     BigDecimal newOutstanding = currentOutstanding.add(amount);
-    //     template.update(UPDATE_AMOUNT_OWED, new Object[]{newOutstanding, userId, friendId});
-    // }
-
-    // public BigDecimal getOutstandingWithFriend(String userId, String friendId) throws UserException{
-    //     try {
-    //         BigDecimal result = template.queryForObject(GET_OUTSTANDING_WITH_FRIEND,  BigDecimal.class, new Object[]{userId, friendId});
-    //         return result;
-    //     } catch (DataAccessException ex) {
-    //         addFriend(userId, friendId);
-    //         addFriend(friendId, userId);
-    //         return BigDecimal.ZERO;
-    //     }
-       
-    // }
 }

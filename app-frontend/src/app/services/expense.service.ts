@@ -84,15 +84,15 @@ export class ExpenseService {
     return this.http.delete<any>('api/transaction/record/' + transactionId);
   }
 
-  payNow(amount: number) {
-    const form = new HttpParams().set('amount', amount * 100);
+  // payNow(amount: number) {
+  //   const form = new HttpParams().set('amount', amount * 100);
 
-    const headers = new HttpHeaders().set(
-      'Content-Type',
-      'application/x-www-form-urlencoded'
-    );
-    return this.http.post('/api/payment/payment-intent', form.toString(), {
-      headers,
-    });
-  }
+  //   const headers = new HttpHeaders().set(
+  //     'Content-Type',
+  //     'application/x-www-form-urlencoded'
+  //   );
+  //   return this.http.post('/api/payment/payment-intent', form.toString(), {
+  //     headers,
+  //   });
+  // }
 }

@@ -12,6 +12,10 @@
           "/manifest.webmanifest",
           "/*.css",
           "/*.js"
+        ],
+        "urls": [
+          "https://fonts.googleapis.com/icon?family=Material+Icons",
+          "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&amp;display=swap"
         ]
       }
     },
@@ -24,6 +28,18 @@
           "/assets/**",
           "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
         ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "rest api",
+      "urls": ["https://localhost:8080/api/**"],
+      "cacheConfig": {
+        "maxSize": 100,
+        "maxAge": "1d",
+        "timeout": "10s",
+        "strategy": "freshness"
       }
     }
   ]

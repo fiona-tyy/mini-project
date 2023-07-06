@@ -37,16 +37,11 @@ export class FriendsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activeUser = this.userSvc.activeUser;
-    if (!!this.activeUser) {
-      this.friends$ = this.userSvc.getFriendsOfActiveUser(
-        this.activeUser.email
-      );
-    }
+    this.friends$ = this.userSvc.getFriendsOfActiveUser();
   }
 
   addFriend(email: string) {
-    firstValueFrom(this.userSvc.addFriend(this.activeUser!.email, email))
+    firstValueFrom(this.userSvc.addFriend(email))
       .then(() => {
         alert('Friend added');
         this.router.navigate(['/home']);
