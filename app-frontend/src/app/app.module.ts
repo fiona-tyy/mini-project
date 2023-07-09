@@ -16,7 +16,6 @@ import { AppComponent } from './app.component';
 import { MaterialModule } from './material.module';
 import { LoginComponent } from './components/login.component';
 import { HomeComponent } from './components/home.component';
-import { RecordsComponent } from './components/records.component';
 import { AddExpenseComponent } from './components/add-expense.component';
 import { AddSharingWithComponent } from './components/add-sharing-with.component';
 import { AddSettlementComponent } from './components/add-settlement.component';
@@ -27,6 +26,7 @@ import { FriendsComponent } from './components/friends.component';
 import { ExpenseService } from './services/expense.service';
 import { UserService } from './services/user.service';
 import { AuthGuard } from './components/auth.guard';
+import { HeaderComponent } from './components/header/header.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent, title: 'Login' },
@@ -36,7 +36,6 @@ const appRoutes: Routes = [
     title: 'Home',
     canActivate: [AuthGuard()],
   },
-  // { path: 'records/:friendId', component: RecordsComponent },
   { path: 'records', component: ExpensesFriendComponent },
   {
     path: 'record/new/sharing',
@@ -74,9 +73,9 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+    HeaderComponent,
     LoginComponent,
     HomeComponent,
-    RecordsComponent,
     AddExpenseComponent,
     AddSharingWithComponent,
     AddSettlementComponent,

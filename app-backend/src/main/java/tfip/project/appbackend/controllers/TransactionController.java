@@ -234,6 +234,22 @@ public class TransactionController {
         }
     
     }
+    @GetMapping(path= "/recent/{userEmail}")
+    public ResponseEntity<String> getRecentActivity(@PathVariable String userEmail){
+
+        List<Transaction> transactions = transSvc.getRecentTransactions(userEmail);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String resp = objectMapper.writeValueAsString(transactions);
+            return ResponseEntity.status(HttpStatus.OK)
+                            .body(resp);
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Json.createObjectBuilder()
+                .add("error", e.getMessage())
+                .build().toString());
+        }
+    }
 
     //for testing
 

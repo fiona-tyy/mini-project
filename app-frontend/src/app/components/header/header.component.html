@@ -1,0 +1,126 @@
+<mat-toolbar color="primary">
+  <span [routerLink]="['/']">My App</span>
+
+  <button
+    mat-flat-button
+    class="nav-button-first"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [routerLink]="['/home']"
+  >
+    <mat-icon>home</mat-icon>
+    Home
+  </button>
+  <button
+    mat-flat-button
+    class="nav-button"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [routerLink]="['/friends']"
+  >
+    <mat-icon>group</mat-icon>
+    Friends
+  </button>
+  <button
+    mat-flat-button
+    class="nav-button"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [matMenuTriggerFor]="recent"
+  >
+    <mat-icon>notifications</mat-icon>
+    Recent
+  </button>
+  <mat-menu #recent="matMenu">
+    <div
+      *ngIf="recent$ | async as activities"
+      style="width: 280px; text-align: justify"
+    >
+      <div *ngFor="let activity of activities; let odd = odd">
+        <div
+          [style.background-color]="
+            odd ? 'rgb(241, 235, 248)' : 'rgb(246, 243, 250)'
+          "
+        >
+          <button
+            mat-menu-item
+            *ngIf="activity.transaction_type == 'expense'"
+            (click)="getTransaction(activity.transaction_id)"
+          >
+            <span style="font-weight: 300; font-size: 0.9em">
+              <span style="font-weight: 500">
+                {{
+                  activity.recorded_by.email == activeUser!.email
+                    ? "You"
+                    : (activity.recorded_by.name | titlecase)
+                }}
+              </span>
+              added an expense for
+              <span style="font-weight: 500">
+                "{{ activity.description | titlecase }}"
+              </span>
+            </span>
+            <br />
+            <span
+              style="font-weight: 100; font-style: italic; font-size: 0.8em"
+              >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+            >
+          </button>
+          <button
+            mat-menu-item
+            *ngIf="activity.transaction_type == 'settlement'"
+          >
+            <span style="font-weight: 300; font-size: 0.9em">
+              <span style="font-weight: 500">
+                {{
+                  activity.who_paid.email == activeUser?.email
+                    ? "You"
+                    : (activity.who_paid.name | titlecase)
+                }}
+              </span>
+              paid
+              <span style="font-weight: 500">
+                {{
+                  activity.who_borrowed.email == activeUser?.email
+                    ? "you"
+                    : (activity.who_borrowed.name | titlecase)
+                }}
+              </span>
+              ${{ activity.who_borrowed.share_amount | number : "1.2-2" }}
+            </span>
+            <br />
+            <span
+              style="font-weight: 100; font-style: italic; font-size: 0.8em"
+              >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+            >
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- <button mat-menu-item>recent 2</button> -->
+  </mat-menu>
+  <span class="spacer"></span>
+
+  <button
+    mat-mini-fab
+    class="nav-button-end mat-elevation-z0"
+    color="primary"
+    *ngIf="isAuthenticated"
+    [matMenuTriggerFor]="menu"
+  >
+    <mat-icon> account_circle </mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item>Item 1</button>
+    <button mat-menu-item>Item 2</button>
+  </mat-menu>
+  <button
+    mat-mini-fab
+    class="nav-button-end mat-elevation-z0"
+    color="primary"
+    *ngIf="isAuthenticated"
+    (click)="logout()"
+  >
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

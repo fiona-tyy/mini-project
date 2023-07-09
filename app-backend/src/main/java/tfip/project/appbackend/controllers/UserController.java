@@ -134,7 +134,7 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String resp = objectMapper.writeValueAsString(friends);
-            System.out.println(">>>friends: " + resp);
+            // System.out.println(">>>friends: " + resp);
             return ResponseEntity.status(HttpStatus.OK)
                                     .body(resp);
         } catch (JsonProcessingException e) {

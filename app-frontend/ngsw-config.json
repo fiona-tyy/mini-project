@@ -33,7 +33,7 @@
   ],
   "dataGroups": [
     {
-      "name": "rest api",
+      "name": "api",
       "urls": ["https://localhost:8080/api/**"],
       "cacheConfig": {
         "maxSize": 100,

@@ -146,6 +146,10 @@ public class TransactionService {
         transSQLRepo.deleteTransaction(transactionId);
    }
 
+   public List<Transaction> getRecentTransactions(String userEmail){
+        return transSQLRepo.getRecentTransactions(userEmail);
+   }
+
    public String uploadReceipt(String transactionId, MultipartFile file) throws IOException{
         return receiptRepo.uploadReceipt(transactionId, file);
    }

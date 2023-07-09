@@ -83,6 +83,15 @@ export class ExpenseService {
   deleteTransactionById(transactionId: string) {
     return this.http.delete<any>('api/transaction/record/' + transactionId);
   }
+  getRecentTransactions() {
+    return this.userSvc.user.pipe(
+      exhaustMap((user) => {
+        return this.http.get<Transaction[]>(
+          '/api/transaction/recent/' + user!.email
+        );
+      })
+    );
+  }
 
   // payNow(amount: number) {
   //   const form = new HttpParams().set('amount', amount * 100);

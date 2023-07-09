@@ -13,6 +13,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import {
   Observable,
   Subscription,
+  exhaustMap,
   firstValueFrom,
   map,
   startWith,
@@ -32,9 +33,9 @@ export class AddSharingWithComponent implements OnInit, OnDestroy {
   friendCtrl = new FormControl('');
   friendsInput$!: Observable<Friend[]>;
   selectedFriends: Friend[] = [];
-  activeUser!: User | null;
+  // activeUser!: User | null;
   // friends$!: Observable<Friend[]>;
-  userSub$!: Subscription;
+  // userSub$!: Subscription;
   friendsSub$!: Subscription;
 
   friends!: Friend[] | null;
@@ -57,37 +58,28 @@ export class AddSharingWithComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.activeUser = this.userSvc.activeUser;
-    // this.userSub$ = this.userSvc.user.subscribe(
-    //   (user) => (this.activeUser = user!)
-    // );
-
-    // firstValueFrom(
-    //   this.userSvc.getFriendsOfActiveUser(this.activeUser!.id)
-    // ).then((result) => (this.friends = result));
-    // this.friendsSub$ = this.userSvc.friendsOfUser.subscribe(
-    //   (friends) => (this.friends = friends)
-    // );
-
-    //friends-1
-    this.friends = this.userSvc.friends;
-    // this.friendsSub$ = this.userSvc
-    //   .getFriendsOfActiveUser(this.activeUser!.id)
-    //   .pipe(
-    //     tap((friends) => {
-    //       console.info('>>friends>>', friends), (this.friends = friends);
-    //     })
-    //   )
-    //   .subscribe();
-
-    // console.info('friends', this.friends);
-    this.friendsInput$ = this.friendCtrl.valueChanges.pipe(
-      startWith(null),
-      map((friendName: string | null) =>
-        // friendName ? this._filter(friendName) : this.activeUser.friends!.slice()
-        friendName ? this._filter(friendName) : this.friends!.slice()
+    // this.activeUser = this.userSvc.activeUser;
+    this.friendsInput$ = this.userSvc.getFriendsOfActiveUser().pipe(
+      tap((result) => {
+        this.friends = result;
+      }),
+      exhaustMap((result) =>
+        this.friendCtrl.valueChanges.pipe(
+          startWith(null),
+          map((friendName: string | null) =>
+            friendName ? this._filter(friendName) : this.friends!.slice()
+          )
+        )
       )
     );
+
+    // this.friendsInput$ = this.friendCtrl.valueChanges.pipe(
+    //   startWith(null),
+    //   map((friendName: string | null) =>
+    //     // friendName ? this._filter(friendName) : this.activeUser.friends!.slice()
+    //     friendName ? this._filter(friendName) : this.friends!.slice()
+    //   )
+    // );
   }
 
   remove(friend: Friend) {

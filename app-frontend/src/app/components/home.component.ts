@@ -4,6 +4,7 @@ import { ExpenseService } from '../services/expense.service';
 import { UserService } from '../services/user.service';
 import { Friend, User, UserDTO } from '../model';
 import { Observable, Subscription, firstValueFrom, tap } from 'rxjs';
+import { SwPush } from '@angular/service-worker';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +25,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private expenseSvc: ExpenseService,
-    private userSvc: UserService
+    private userSvc: UserService,
+    private swPush: SwPush
   ) {}
 
   ngOnInit(): void {

@@ -72,6 +72,16 @@ public class TransactionSQLRepository {
     public final String DELETE_TRANSACTION = """
             DELETE FROM transactions WHERE id = ?
             """;
+    public final String GET_RECENT_TRANSACTIONS = """
+            SELECT transaction_id, transaction_type, description, recorded_by, t3.name as recorder_name, recorded_date,lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount 
+            FROM loans JOIN transactions 
+            ON loans.transaction_id=transactions.id 
+            JOIN users AS T1 ON loans.lender_email=T1.email
+            JOIN users AS T2 ON loans.borrower_email=T2.email
+            JOIN users AS T3 ON transactions.recorded_by=t3.email
+            WHERE (lender_email = ? or borrower_email = ?) 
+            ORDER BY recorded_date DESC LIMIT 5
+            """;
 
     public void addTransaction(String transactionId, String transactionType, String desc, long date, BigDecimal totalAmount, String recordedBy, long recordedDate, String attachment) throws TransactionException{
 
@@ -166,6 +176,35 @@ public class TransactionSQLRepository {
         if(result <1){
             throw new TransactionException("Failed to delete transaction.");
         }
+    }
+
+    public List<Transaction> getRecentTransactions(String userEmail){
+
+        // SELECT transaction_id, transaction_type, description, recorded_by, t3.name as recorder_name, recorded_date,lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount
+        List<Transaction> transactions = new LinkedList<>();
+        SqlRowSet rs = template.queryForRowSet(GET_RECENT_TRANSACTIONS, userEmail, userEmail);
+        while(rs.next()){
+            Transaction trans = new Transaction();
+            trans.setTransactionId(rs.getString( "transaction_id"));
+            trans.setTransactionType(rs.getString("transaction_type"));
+            trans.setDescription(rs.getString("description"));
+            trans.setRecordedDate(rs.getLong("recorded_date"));
+            User recorder = new User();
+            recorder.setEmail(rs.getString("recorded_by"));
+            recorder.setName(rs.getString("recorder_name"));
+            trans.setRecordedBy(recorder);
+            User whoPaid = new User();
+            whoPaid.setEmail(rs.getString("lender_email"));
+            whoPaid.setName(rs.getString("lender_name"));
+            trans.setWhoPaid(whoPaid);
+            ShareSplit share = new ShareSplit();
+            share.setEmail(rs.getString("borrower_email"));
+            share.setName(rs.getString("borrower_name"));
+            share.setShareAmount(rs.getBigDecimal("amount"));
+            trans.setWhoBorrowed(share);
+            transactions.add(trans); 
+        }
+        return transactions;
     }
 
 

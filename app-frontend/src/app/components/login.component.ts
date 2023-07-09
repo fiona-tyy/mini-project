@@ -1,22 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ExpenseService } from '../services/expense.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
-import { User } from '../model';
+import { User, UserDTO } from '../model';
 import {
   GoogleLoginProvider,
   SocialAuthService,
   SocialUser,
 } from '@abacritt/angularx-social-login';
-import { exhaustMap, tap } from 'rxjs';
+import { Subscription, exhaustMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private expenseSvc: ExpenseService,
@@ -29,23 +29,28 @@ export class LoginComponent implements OnInit {
   isLoginMode = true;
   isLoading = false;
 
-  activeUser!: User;
+  activeUser!: UserDTO | null;
+  userSub$!: Subscription;
   loginForm!: FormGroup;
   signupForm!: FormGroup;
   socialUser!: SocialUser;
-  isLoggedin?: boolean;
+  // isLoggedin?: boolean;
 
   error: string | null = null;
 
   ngOnInit(): void {
+    this.userSub$ = this.userSvc.user
+      .pipe(
+        tap((user) => {
+          let isLoggedin = !!user;
+          if (isLoggedin) {
+            this.router.navigate(['/home']);
+          }
+        })
+      )
+      .subscribe();
     this.loginForm = this.createLoginForm();
     this.signupForm = this.createSignupForm();
-
-    // this.authService.authState.subscribe((user) => {
-    //   this.socialUser = user;
-    //   this.isLoggedin = user != null;
-    //   console.log(this.socialUser);
-    // });
 
     let user$ = this.authService.authState
       .pipe(
@@ -143,6 +148,9 @@ export class LoginComponent implements OnInit {
     // });
   }
 
+  ngOnDestroy(): void {
+    this.userSub$.unsubscribe();
+  }
   private createLoginForm() {
     return this.fb.group({
       email: this.fb.control<string>('lily@email.com', [
