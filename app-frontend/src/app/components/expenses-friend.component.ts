@@ -42,10 +42,7 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
         (this.friend = frd!),
           this.title.setTitle('Friend: ' + frd!.name.toUpperCase());
       }),
-      exhaustMap((frd) =>
-        this.expenseSvc.getTransactionsWithFriend(frd!.email)
-      ),
-      tap((results) => console.info('what ', results))
+      exhaustMap((frd) => this.expenseSvc.getTransactionsWithFriend(frd!.email))
     );
   }
 

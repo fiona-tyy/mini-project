@@ -11,6 +11,8 @@ import {
   SocialAuthServiceConfig,
   SocialLoginModule,
 } from '@abacritt/angularx-social-login';
+import { AngularFireModule } from '@angular/fire/compat';
+import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
 
 import { AppComponent } from './app.component';
 import { MaterialModule } from './material.module';
@@ -27,6 +29,9 @@ import { ExpenseService } from './services/expense.service';
 import { UserService } from './services/user.service';
 import { AuthGuard } from './components/auth.guard';
 import { HeaderComponent } from './components/header/header.component';
+import { environment } from 'src/environment/environment';
+import { NotificationService } from './services/notification.service';
+import { NotificationComponent } from './components/notification/notification.component';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent, title: 'Login' },
@@ -83,6 +88,7 @@ const appRoutes: Routes = [
     ExpensesFriendComponent,
     LoadingSpinnerComponent,
     FriendsComponent,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,
@@ -94,16 +100,19 @@ const appRoutes: Routes = [
     MaterialModule,
     SocialLoginModule,
     GoogleSigninButtonModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
+    ServiceWorkerModule.register('main-sw.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',
     }),
+    AngularFireModule.initializeApp(environment.FirebaseConfig),
+    AngularFireMessagingModule,
   ],
   providers: [
     ExpenseService,
     UserService,
+    NotificationService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

@@ -89,3 +89,9 @@ export interface UserDTO {
   token_expiration_date: number;
   google_token?: string;
 }
+
+export interface NotificationModel {
+  title: string;
+  body: string;
+  isVisible: boolean;
+}

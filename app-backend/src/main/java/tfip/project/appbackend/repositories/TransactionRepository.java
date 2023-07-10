@@ -1,18 +1,8 @@
 package tfip.project.appbackend.repositories;
 
-import java.math.BigDecimal;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.bson.Document;
-import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -20,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import tfip.project.appbackend.models.ShareSplit;
 import tfip.project.appbackend.models.ExpenseProcessed;
-import tfip.project.appbackend.models.Transaction;
-import tfip.project.appbackend.models.User;
 
 //to delete
 @Repository

@@ -11,6 +11,10 @@
       -friend.amount_outstanding | number : "1.2-2"
     }}
   </p>
+  <p *ngIf="friend.amount_outstanding == 0">
+    There are no outstanding payments between you and
+    {{ friend.name | titlecase }}
+  </p>
 
   <button
     mat-raised-button
@@ -26,6 +30,7 @@
     mat-raised-button
     color="basic"
     style="width: 150px; margin-bottom: 15px; margin-left: 10px"
+    [disabled]="friend.amount_outstanding == 0"
   >
     <mat-icon> notifications_active </mat-icon>
     Remind

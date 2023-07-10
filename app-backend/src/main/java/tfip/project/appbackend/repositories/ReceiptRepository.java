@@ -1,7 +1,6 @@
 package tfip.project.appbackend.repositories;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 

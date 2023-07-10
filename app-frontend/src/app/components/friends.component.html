@@ -26,7 +26,10 @@
 
   <table *ngIf="friends$ | async as friends" style="margin-top: 30px">
     <tr *ngFor="let friend of friends">
-      <td>
+      <td
+        [routerLink]="['/records']"
+        [queryParams]="{ friendEmail: friend.email }"
+      >
         {{ friend.name | titlecase }}
         <span style="font-weight: 200; font-style: italic; margin-left: 10px">{{
           friend.email
