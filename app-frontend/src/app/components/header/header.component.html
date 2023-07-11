@@ -127,6 +127,15 @@
     class="nav-button-end mat-elevation-z0"
     color="primary"
     *ngIf="isAuthenticated"
+    [routerLink]="['/record', 'new', 'sharing']"
+  >
+    <mat-icon> add </mat-icon>
+  </button>
+  <!-- <button
+    mat-mini-fab
+    class="nav-button-end mat-elevation-z0"
+    color="primary"
+    *ngIf="isAuthenticated"
     [matMenuTriggerFor]="menu"
   >
     <mat-icon> account_circle </mat-icon>
@@ -134,7 +143,7 @@
   <mat-menu #menu="matMenu">
     <button mat-menu-item>Item 1</button>
     <button mat-menu-item>Item 2</button>
-  </mat-menu>
+  </mat-menu> -->
   <button
     mat-mini-fab
     class="nav-button-end mat-elevation-z0"

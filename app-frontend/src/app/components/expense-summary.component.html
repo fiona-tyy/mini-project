@@ -1,98 +1,116 @@
 <div class="container-main" *ngIf="summary$ | async as s">
-  <div *ngIf="s[0].transaction_type == 'expense'">
-    <h3>
-      <span style="vertical-align: middle"> Expenses for </span>
-      <span style="vertical-align: middle"
-        >{{ s[0].description | uppercase }} on
-        {{ s[0].date | date : "d MMM yyyy" }}</span
-      >
-      <span
-        *ngIf="s[0].attachment == 'Y'"
-        style="vertical-align: middle; margin-left: 10px"
-      >
-        <a [href]="url" target="_blank">
-          <mat-icon>receipt</mat-icon>
-        </a>
-      </span>
-    </h3>
-    <p style="font-style: italic; font-size: smaller">
-      recorded by
-      <strong>
-        {{
-          s[0].recorded_by.email == activeUser!.email
-            ? "you"
-            : (s[0].recorded_by.name | titlecase)
-        }}
-      </strong>
-      on {{ s[0].recorded_date | date : "d MMM yyyy" }}
-    </p>
-
-    <div class="container-content">
-      <h4>
-        {{
-          s[0].who_paid.email == activeUser!.email
-            ? "You"
-            : (s[0].who_paid.name | titlecase)
-        }}
-        paid ${{ s[0].total_amount | number : "1.2-2" }}
-      </h4>
-
-      <ul *ngFor="let share of s">
-        <li>
-          {{
-            share.who_borrowed.email == activeUser!.email
-              ? "You"
-              : (share.who_borrowed.name | titlecase)
-          }}
-          owe
-          {{
-            share.who_paid.email == activeUser!.email
-              ? "you"
-              : (share.who_paid.name | titlecase)
-          }}
-          ${{ share.who_borrowed.share_amount | number : "1.2-2" }}
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div *ngIf="s[0].transaction_type == 'settlement'">
-    <h3>Repayment</h3>
-    <p style="font-style: italic; font-size: smaller">
-      recorded by
-      <strong>
-        {{
-          s[0].recorded_by.email == activeUser!.email
-            ? "you"
-            : (s[0].recorded_by.name | titlecase)
-        }}
-      </strong>
-      on {{ s[0].recorded_date | date }}
-    </p>
-    <div class="container-content">
-      <h4>
-        {{
-          s[0].who_paid.email == activeUser!.email
-            ? "You"
-            : (s[0].who_paid.name | titlecase)
-        }}
-        made a repayment of ${{ s[0].total_amount | number : "1.2-2" }} to
-        {{
-          s[0].who_borrowed.email == activeUser!.email
-            ? "you"
-            : (s[0].who_borrowed.name | titlecase)
-        }}
-      </h4>
-    </div>
-  </div>
-  <div>
-    <!-- <button
-      mat-raised-button
-      type="button"
-      [routerLink]="['/home']"
-      style="width: 100px; margin-top: 15px"
+  <div style="text-align: end; position: relative; top: 40px">
+    <mat-icon
+      style="margin-left: 10px; margin-right: 10px"
+      color="warn"
+      (click)="delete(s[0].transaction_id)"
+      >delete</mat-icon
     >
-      Home
-    </button> -->
+    <mat-icon
+      *ngIf="shareSupported"
+      style="margin-left: 10px; margin-right: 10px"
+      color="primary"
+      (click)="share()"
+      >share</mat-icon
+    >
+  </div>
+  <div id="page-summary" style="background-color: white">
+    <div *ngIf="s[0].transaction_type == 'expense'">
+      <h3>
+        <span style="vertical-align: middle"> Expenses for </span>
+        <span style="vertical-align: middle"
+          >{{ s[0].description | uppercase }} on
+          {{ s[0].date | date : "d MMM yyyy" }}</span
+        >
+        <span
+          *ngIf="s[0].attachment == 'Y'"
+          style="vertical-align: middle; margin-left: 10px"
+        >
+          <a [href]="url" target="_blank">
+            <mat-icon>receipt</mat-icon>
+          </a>
+        </span>
+      </h3>
+      <p style="font-style: italic; font-size: smaller">
+        recorded by
+        <strong>
+          {{
+            s[0].recorded_by.email == activeUser!.email
+              ? "you"
+              : (s[0].recorded_by.name | titlecase)
+          }}
+        </strong>
+        on {{ s[0].recorded_date | date : "d MMM yyyy" }}
+      </p>
+
+      <div class="container-content">
+        <h4>
+          {{
+            s[0].who_paid.email == activeUser!.email
+              ? "You"
+              : (s[0].who_paid.name | titlecase)
+          }}
+          paid ${{ s[0].total_amount | number : "1.2-2" }}
+        </h4>
+
+        <ul *ngFor="let share of s">
+          <li
+            [routerLink]="['/records']"
+            [queryParams]="{
+              friendEmail:
+                share.who_borrowed.email == activeUser!.email
+                  ? share.who_paid.email
+                  : share.who_borrowed.email
+            }"
+          >
+            {{
+              share.who_borrowed.email == activeUser!.email
+                ? "You owe"
+                : (share.who_borrowed.name | titlecase) + " owes"
+            }}
+
+            {{
+              share.who_paid.email == activeUser!.email
+                ? "you"
+                : (share.who_paid.name | titlecase)
+            }}
+            ${{ share.who_borrowed.share_amount | number : "1.2-2" }}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div *ngIf="s[0].transaction_type == 'settlement'">
+      <h3>Repayment</h3>
+      <p style="font-style: italic; font-size: smaller">
+        recorded by
+        <strong>
+          {{
+            s[0].recorded_by.email == activeUser!.email
+              ? "you"
+              : (s[0].recorded_by.name | titlecase)
+          }}
+        </strong>
+        on {{ s[0].recorded_date | date }}
+      </p>
+      <div class="container-content">
+        <h4>
+          {{
+            s[0].who_paid.email == activeUser!.email
+              ? "You"
+              : (s[0].who_paid.name | titlecase)
+          }}
+          made a repayment of ${{ s[0].total_amount | number : "1.2-2" }} to
+          {{
+            s[0].who_borrowed.email == activeUser!.email
+              ? "you"
+              : (s[0].who_borrowed.name | titlecase)
+          }}
+        </h4>
+        <br />
+      </div>
+    </div>
+  </div>
+  <!-- <div>
     <button
       mat-raised-button
       color="primary"
@@ -102,6 +120,7 @@
     >
       New Expense
     </button>
+
     <button
       mat-raised-button
       color="warn"
@@ -111,5 +130,5 @@
     >
       Delete
     </button>
-  </div>
+  </div> -->
 </div>
