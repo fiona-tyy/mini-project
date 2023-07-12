@@ -30,7 +30,8 @@
     mat-raised-button
     color="basic"
     style="width: 150px; margin-bottom: 15px; margin-left: 10px"
-    [disabled]="friend.amount_outstanding == 0"
+    [disabled]="friend.amount_outstanding <= 0"
+    (click)="sendReminderEmail()"
   >
     <mat-icon> notifications_active </mat-icon>
     Remind

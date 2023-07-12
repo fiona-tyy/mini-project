@@ -43,7 +43,7 @@ public class MessageService {
         // String condition = "'abc-email.com' in topics";
 
         Message msg = Message.builder()
-                            .setNotification(Notification.builder().setTitle("New Expense").setBody(processed.getRecordedBy().getName().toUpperCase()+ " added an expense for " + processed.getDescription()).build())
+                            .setNotification(Notification.builder().setTitle("New Expense").setBody(Util.toTitleCase(processed.getRecordedBy().getName()) + " added an expense for " + Util.toTitleCase( processed.getDescription())).build())
                             .setCondition(condition)
                             .build();
         return fcm.send(msg);
@@ -56,7 +56,7 @@ public class MessageService {
         System.out.println(">>condition: " + condition);
 
         Message msg = Message.builder()
-                            .setNotification(Notification.builder().setTitle("New Payment").setBody(settlement.getWhoPaid().getName().toUpperCase() + " paid " + settlement.getWhoReceived().getName().toUpperCase() + " $" + settlement.getRepaymentAmount()).build())
+                            .setNotification(Notification.builder().setTitle("New Payment").setBody(Util.toTitleCase( settlement.getWhoPaid().getName()) + " paid " + Util.toTitleCase(settlement.getWhoReceived().getName()) + " $" + settlement.getRepaymentAmount()).build())
                             .setCondition(condition)
                             .build();
         return fcm.send(msg);

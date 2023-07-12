@@ -36,22 +36,5 @@ public class MessageController {
         
         return ResponseEntity.ok().build();
     }
-    // @PostMapping(path = "/unsubscribe")
-    // public ResponseEntity<String> subscribeToNotification() throws FirebaseMessagingException{
-    //     msgSvc.subscribeTopic("", "");
-        
-    //     return ResponseEntity.ok().build();
-    // }
-
-    // @PostMapping(path = "/send")
-    // public ResponseEntity<String> sendNotification() throws JsonMappingException, JsonProcessingException, FirebaseMessagingException{
-    //     // String topic = "abc-email.com";
-    //     List<String> topics = Arrays.asList("abc-email.com", "lily-email.com");
-
-    //     String msgId = msgSvc.sendNotificationToTopic(topics);
-    //     System.out.println(">>message to topic: " + msgId);
-
-    //     return ResponseEntity.ok().build();
-    // }
     
 }

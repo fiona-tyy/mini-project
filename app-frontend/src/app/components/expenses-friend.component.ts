@@ -83,6 +83,9 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
       });
     }
   }
+  sendReminderEmail() {
+    //data: friend.email, activeuser name and email, friend.amount_outstanding
+  }
 
   ngOnDestroy(): void {
     this.userSub$.unsubscribe();
