@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import {
   FormArray,
@@ -44,6 +50,7 @@ export class AddExpenseComponent implements OnInit {
   // userSub$!: Subscription;
   activeUser!: UserDTO | null;
   transactionId!: string;
+  totalCost!: number;
   isProcessing = true;
 
   constructor(
@@ -69,6 +76,7 @@ export class AddExpenseComponent implements OnInit {
           console.info(result);
           this.isProcessing = false;
           this.form = this.createForm(result);
+          this.calculateTotalCost();
         }
       );
     }
@@ -80,6 +88,7 @@ export class AddExpenseComponent implements OnInit {
 
   deleteItem(index: number) {
     this.itemArr.removeAt(index);
+    this.calculateTotalCost();
   }
 
   invalidForm() {
@@ -103,6 +112,18 @@ export class AddExpenseComponent implements OnInit {
       });
     }
     // console.info('who is sharing', s);
+  }
+  selectAll(checked: boolean, i: number) {
+    //TODO select all method
+  }
+
+  calculateTotalCost() {
+    let totalCost = 0;
+    for (let control of this.itemArr.controls) {
+      totalCost += control.value['amount'];
+    }
+    totalCost += this.form.value['gst'] + this.form.value['service_charge'];
+    this.totalCost = totalCost;
   }
 
   processForm() {

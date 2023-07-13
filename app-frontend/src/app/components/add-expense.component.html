@@ -74,22 +74,32 @@
           Add Item
         </button>
       </div>
-      <table formArrayName="line_items">
+      <table formArrayName="line_items" style="width: 100%; display: flex">
         <tr
           *ngFor="let it of itemArr.controls; let i = index"
           [formGroupName]="i"
         >
           <td>
-            <mat-form-field>
+            <mat-form-field class="container-form-field-small">
               <mat-label>Item</mat-label>
               <input matInput type="text" formControlName="item" />
             </mat-form-field>
           </td>
           <td>
-            <mat-form-field>
+            <mat-form-field class="container-form-field-small">
               <mat-label>Amount</mat-label>
-              <input matInput type="number" formControlName="amount" />
+              <input
+                matInput
+                type="number"
+                formControlName="amount"
+                (input)="calculateTotalCost()"
+              />
             </mat-form-field>
+          </td>
+          <td>
+            <mat-checkbox (change)="selectAll($event.checked, i)">
+              Select all
+            </mat-checkbox>
           </td>
           <td>
             <mat-checkbox
@@ -99,7 +109,6 @@
               You
             </mat-checkbox>
           </td>
-
           <td *ngFor="let user of selectedFriends">
             <mat-checkbox
               [value]="user.email"
@@ -116,14 +125,33 @@
         </tr>
       </table>
       <br />
-      <mat-form-field class="container-form-field">
+      <mat-form-field class="container-form-field-small">
         <mat-label>Service Charge</mat-label>
-        <input type="number" matInput formControlName="service_charge" />
+        <input
+          type="number"
+          matInput
+          formControlName="service_charge"
+          (input)="calculateTotalCost()"
+        />
       </mat-form-field>
-      <mat-form-field class="container-form-field">
+      <mat-form-field class="container-form-field-small">
         <mat-label>GST</mat-label>
-        <input type="number" matInput formControlName="gst" />
+        <input
+          type="number"
+          matInput
+          formControlName="gst"
+          (input)="calculateTotalCost()"
+        />
       </mat-form-field>
+      <div>
+        <table id="table-total-cost">
+          <tr>
+            <td style="width: 15%">Total Cost :</td>
+            <td>${{ totalCost | number : "1.2-2" }}</td>
+          </tr>
+        </table>
+      </div>
+      <br />
       <div>
         <button
           mat-raised-button
@@ -160,6 +188,6 @@
     <app-loading-spinner></app-loading-spinner>
     <br />
     <br />
-    Take a breather while we read your receipt
+    Reading your receipt
   </div>
 </ng-template>

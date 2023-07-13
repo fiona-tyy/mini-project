@@ -1,156 +1,174 @@
-<mat-toolbar color="primary">
-  <img
-    src="../assets/images/ninja.png"
-    width="35px"
-    style="margin-right: 5px"
-  />
-  <span [routerLink]="['/']"
-    ><span
-      style="
-        color: rgb(2, 38, 65);
-        font-size: 1.1em;
-        -webkit-text-stroke: white 0.1px;
-      "
-      >Ninja</span
-    ><span
-      style="
-        color: rgb(137, 30, 30);
-        font-size: 1.1em;
-        -webkit-text-stroke: white 0.2px;
-      "
-      >Split</span
-    ></span
-  >
-
-  <button
-    mat-flat-button
-    class="nav-button-first"
-    color="primary"
-    *ngIf="isAuthenticated"
-    [routerLink]="['/home']"
-  >
-    <mat-icon>home</mat-icon>
-    Home
-  </button>
-  <button
-    mat-flat-button
-    class="nav-button"
-    color="primary"
-    *ngIf="isAuthenticated"
-    [routerLink]="['/friends']"
-  >
-    <mat-icon>group</mat-icon>
-    Friends
-  </button>
-  <button
-    mat-flat-button
-    class="nav-button"
-    color="primary"
-    *ngIf="isAuthenticated"
-    [matMenuTriggerFor]="recent"
-  >
-    <mat-icon>notifications</mat-icon>
-    Recent
-  </button>
-  <mat-menu #recent="matMenu">
-    <div
-      *ngIf="recent$ | async as activities"
-      style="width: 280px; text-align: justify"
+<div>
+  <mat-toolbar color="primary">
+    <img
+      src="../assets/images/ninja.png"
+      width="35px"
+      style="margin-right: 5px"
+    />
+    <span class="main-logo-label" [routerLink]="['/']"
+      ><span
+        style="
+          color: rgb(2, 38, 65);
+          font-size: 1.1em;
+          -webkit-text-stroke: white 0.1px;
+        "
+        >Ninja</span
+      ><span
+        style="
+          color: rgb(137, 30, 30);
+          font-size: 1.1em;
+          -webkit-text-stroke: white 0.2px;
+        "
+        >Split</span
+      ></span
     >
-      <div *ngFor="let activity of activities; let odd = odd">
-        <div
-          [style.background-color]="
-            odd ? 'rgb(241, 235, 248)' : 'rgb(246, 243, 250)'
-          "
-        >
-          <button
-            mat-menu-item
-            *ngIf="activity.transaction_type == 'expense'"
-            (click)="getTransaction(activity.transaction_id)"
+
+    <button
+      mat-flat-button
+      class="nav-button-first"
+      color="primary"
+      *ngIf="isAuthenticated"
+      [routerLink]="['/home']"
+    >
+      <img
+        src="../assets/images/home.png"
+        width="25px"
+        style="margin-right: 5px; vertical-align: middle; color: white"
+      />
+      <!-- <mat-icon>home</mat-icon> -->
+      <span class="icon-label"> Home </span>
+    </button>
+    <button
+      mat-flat-button
+      class="nav-button"
+      color="primary"
+      *ngIf="isAuthenticated"
+      [routerLink]="['/friends']"
+    >
+      <img
+        src="../assets/images/ninja-multiple.png"
+        width="25px"
+        style="margin-right: 5px; vertical-align: middle; color: white"
+      />
+      <!-- <mat-icon>group</mat-icon> -->
+      <span class="icon-label"> Friends </span>
+    </button>
+    <button
+      mat-flat-button
+      class="nav-button"
+      color="primary"
+      *ngIf="isAuthenticated"
+      [matMenuTriggerFor]="recent"
+    >
+      <img
+        src="../assets/images/scroll.png"
+        width="25px"
+        style="margin-right: 5px; vertical-align: middle; color: white"
+      />
+      <!-- <mat-icon>notifications</mat-icon> -->
+      <span class="icon-label"> Recent </span>
+    </button>
+    <mat-menu #recent="matMenu">
+      <div
+        *ngIf="recent$ | async as activities"
+        style="width: 280px; text-align: justify"
+      >
+        <div *ngFor="let activity of activities; let odd = odd">
+          <div
+            [style.background-color]="
+              odd ? 'rgb(241, 235, 248)' : 'rgb(246, 243, 250)'
+            "
           >
-            <span style="font-weight: 300; font-size: 0.9em">
-              <span style="font-weight: 500">
-                {{
-                  activity.recorded_by.email == activeUser!.email
-                    ? "You"
-                    : (activity.recorded_by.name | titlecase)
-                }}
-              </span>
-              added an expense for
-              <span style="font-weight: 500">
-                "{{ activity.description | titlecase }}"
-              </span>
-            </span>
-            <br />
-            <span
-              style="font-weight: 100; font-style: italic; font-size: 0.8em"
-              >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+            <button
+              mat-menu-item
+              *ngIf="activity.transaction_type == 'expense'"
+              (click)="getTransaction(activity.transaction_id)"
             >
-          </button>
-          <button
-            mat-menu-item
-            *ngIf="activity.transaction_type == 'settlement'"
-          >
-            <span style="font-weight: 300; font-size: 0.9em">
-              <span style="font-weight: 500">
-                {{
-                  activity.who_paid.email == activeUser?.email
-                    ? "You"
-                    : (activity.who_paid.name | titlecase)
-                }}
+              <span style="font-weight: 300; font-size: 0.9em">
+                <span style="font-weight: 500">
+                  {{
+                    activity.recorded_by.email == activeUser!.email
+                      ? "You"
+                      : (activity.recorded_by.name | titlecase)
+                  }}
+                </span>
+                added an expense for
+                <span style="font-weight: 500">
+                  "{{ activity.description | titlecase }}"
+                </span>
               </span>
-              paid
-              <span style="font-weight: 500">
-                {{
-                  activity.who_borrowed.email == activeUser?.email
-                    ? "you"
-                    : (activity.who_borrowed.name | titlecase)
-                }}
-              </span>
-              ${{ activity.who_borrowed.share_amount | number : "1.2-2" }}
-            </span>
-            <br />
-            <span
-              style="font-weight: 100; font-style: italic; font-size: 0.8em"
-              >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+              <br />
+              <span
+                style="font-weight: 100; font-style: italic; font-size: 0.8em"
+                >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+              >
+            </button>
+            <button
+              mat-menu-item
+              *ngIf="activity.transaction_type == 'settlement'"
+              (click)="getTransaction(activity.transaction_id)"
             >
-          </button>
+              <span style="font-weight: 300; font-size: 0.9em">
+                <span style="font-weight: 500">
+                  {{
+                    activity.who_paid.email == activeUser?.email
+                      ? "You"
+                      : (activity.who_paid.name | titlecase)
+                  }}
+                </span>
+                paid
+                <span style="font-weight: 500">
+                  {{
+                    activity.who_borrowed.email == activeUser?.email
+                      ? "you"
+                      : (activity.who_borrowed.name | titlecase)
+                  }}
+                </span>
+                ${{ activity.who_borrowed.share_amount | number : "1.2-2" }}
+              </span>
+              <br />
+              <span
+                style="font-weight: 100; font-style: italic; font-size: 0.8em"
+                >{{ activity.recorded_date | date : "d MMM y, h:mm a" }}</span
+              >
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- <button mat-menu-item>recent 2</button> -->
-  </mat-menu>
-  <span class="spacer"></span>
+      <!-- <button mat-menu-item>recent 2</button> -->
+    </mat-menu>
+    <span class="spacer"></span>
 
-  <button
-    mat-mini-fab
-    class="nav-button-end mat-elevation-z0"
-    color="primary"
-    *ngIf="isAuthenticated"
-    [routerLink]="['/record', 'new', 'sharing']"
-  >
-    <mat-icon> add </mat-icon>
-  </button>
-  <!-- <button
-    mat-mini-fab
-    class="nav-button-end mat-elevation-z0"
-    color="primary"
-    *ngIf="isAuthenticated"
-    [matMenuTriggerFor]="menu"
-  >
-    <mat-icon> account_circle </mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item>Item 1</button>
-    <button mat-menu-item>Item 2</button>
-  </mat-menu> -->
-  <button
-    mat-mini-fab
-    class="nav-button-end mat-elevation-z0"
-    color="primary"
-    *ngIf="isAuthenticated"
-    (click)="logout()"
-  >
-    <mat-icon>logout</mat-icon>
-  </button>
-</mat-toolbar>
+    <button
+      mat-mini-fab
+      class="nav-button-end mat-elevation-z0"
+      color="primary"
+      *ngIf="isAuthenticated"
+      [routerLink]="['/record', 'new', 'sharing']"
+    >
+      <mat-icon> add </mat-icon>
+    </button>
+    <!-- <button
+      mat-mini-fab
+      class="nav-button-end mat-elevation-z0"
+      color="primary"
+      *ngIf="isAuthenticated"
+      [matMenuTriggerFor]="menu"
+    >
+      <mat-icon> account_circle </mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Item 1</button>
+      <button mat-menu-item>Item 2</button>
+    </mat-menu> -->
+    <button
+      mat-mini-fab
+      class="nav-button-end mat-elevation-z0"
+      color="primary"
+      *ngIf="isAuthenticated"
+      (click)="logout()"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+</div>

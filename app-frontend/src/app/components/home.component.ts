@@ -3,8 +3,16 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ExpenseService } from '../services/expense.service';
 import { UserService } from '../services/user.service';
 import { Friend, User, UserDTO } from '../model';
-import { Observable, Subscription, firstValueFrom, tap } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  exhaustMap,
+  firstValueFrom,
+  tap,
+} from 'rxjs';
 import { SwPush } from '@angular/service-worker';
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +34,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private router: Router,
     private expenseSvc: ExpenseService,
     private userSvc: UserService,
-    private swPush: SwPush
+    private afMessaging: AngularFireMessaging,
+    private notificationSvc: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -55,12 +64,16 @@ export class HomeComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe();
-
-      //friend-1
-      // firstValueFrom(
-      //   this.userSvc.getFriendsOfActiveUser(this.activeUser!.email)
-      // ).then((result) => (this.userSvc.friends = result));
     }
+    this.afMessaging.requestToken
+      .pipe(
+        tap((token) => {
+          console.info('token: ', token);
+          // this.token = token;
+        }),
+        exhaustMap((token) => this.notificationSvc.subscribeNotification(token))
+      )
+      .subscribe();
   }
 
   onNew() {

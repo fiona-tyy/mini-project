@@ -31,21 +31,24 @@
           <mat-label>Password</mat-label>
           <input
             matInput
-            [type]="hide ? 'password' : 'text'"
+            [type]="hide1 ? 'password' : 'text'"
+            maxlength="32"
             formControlName="password"
           />
           <button
             mat-icon-button
             matSuffix
-            (click)="hide = !hide"
+            (click)="hide1 = !hide1"
             [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
+            [attr.aria-pressed]="hide1"
           >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+            <mat-icon>{{ hide1 ? "visibility_off" : "visibility" }}</mat-icon>
           </button>
         </mat-form-field>
       </div>
-      <div class="form-pw-reset">Forgot your password?</div>
+      <div class="form-pw-reset" [routerLink]="['/request-code']">
+        Forgot your password?
+      </div>
 
       <div class="form-button">
         <button
@@ -104,26 +107,62 @@
           <mat-label>Password</mat-label>
           <input
             matInput
-            [type]="hide ? 'password' : 'text'"
+            [type]="hide1 ? 'password' : 'text'"
+            maxlength="32"
             formControlName="password"
           />
           <button
             mat-icon-button
             matSuffix
-            (click)="hide = !hide"
+            (click)="hide1 = !hide1"
             [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide"
+            [attr.aria-pressed]="hide1"
           >
-            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+            <mat-icon>{{ hide1 ? "visibility_off" : "visibility" }}</mat-icon>
           </button>
         </mat-form-field>
+      </div>
+      <div class="form-component">
+        <mat-form-field
+          appearance="outline"
+          floatLabel="auto"
+          hideRequiredMarker="true"
+        >
+          <mat-label>Re-Enter Password</mat-label>
+          <input
+            matInput
+            [type]="hide2 ? 'password' : 'text'"
+            maxlength="32"
+            formControlName="password2"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide2 = !hide2"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide2"
+          >
+            <mat-icon>{{ hide2 ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div
+        *ngIf="
+          signupForm.controls['password'].value !=
+            signupForm.controls['password2'].value &&
+          (signupForm.controls['password2'].dirty ||
+            signupForm.controls['password2'].touched)
+        "
+        style="color: red"
+      >
+        Passwords do not match!
       </div>
       <div class="form-button">
         <button
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="signupForm.invalid"
+          [disabled]="invalidSignupForm()"
         >
           Sign Up
         </button>

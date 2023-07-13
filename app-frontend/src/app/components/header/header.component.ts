@@ -33,7 +33,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.activeUser = user;
       this.isAuthenticated = !!user;
     });
-    this.recent$ = this.expenseSvc.getRecentTransactions();
+    if (this.isAuthenticated) {
+      this.recent$ = this.expenseSvc.getRecentTransactions();
+    }
   }
 
   getTransaction(transactionId: string) {

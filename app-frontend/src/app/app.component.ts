@@ -36,15 +36,15 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.userSvc.autoLogin();
 
-    this.afMessaging.requestToken
-      .pipe(
-        tap((token) => {
-          console.info('token: ', token);
-          this.token = token;
-        }),
-        exhaustMap((token) => this.notificationSvc.subscribeNotification(token))
-      )
-      .subscribe();
+    // this.afMessaging.requestToken
+    //   .pipe(
+    //     tap((token) => {
+    //       console.info('token: ', token);
+    //       this.token = token;
+    //     }),
+    //     exhaustMap((token) => this.notificationSvc.subscribeNotification(token))
+    //   )
+    //   .subscribe();
 
     this.afMessaging.messages.subscribe((msg) => {
       console.info('new message:', msg);

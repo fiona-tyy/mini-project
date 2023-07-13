@@ -85,6 +85,7 @@ export class ExpenseService {
   }
   getRecentTransactions() {
     return this.userSvc.user.pipe(
+      take(1),
       exhaustMap((user) => {
         return this.http.get<Transaction[]>(
           '/api/transaction/recent/' + user!.email

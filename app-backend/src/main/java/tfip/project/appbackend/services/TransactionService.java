@@ -66,7 +66,9 @@ public class TransactionService {
         for(LineItem it: trans.getLineItems()){
             
             totalAmount = totalAmount.add(it.getAmount());
-            BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 2, RoundingMode.HALF_EVEN);
+            // BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 2, RoundingMode.HALF_EVEN);
+            BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 4, RoundingMode.HALF_EVEN);
+
             for (String str : it.getSplitWith()){
                 if(!sharing.contains(str)){
                     sharing.add(str);
@@ -92,9 +94,13 @@ public class TransactionService {
         
         for (ShareSplit s : sharesSplit){
 
-            BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,2, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
-            BigDecimal roundedTaxSplit = taxSplit.setScale(2, RoundingMode.HALF_EVEN);
-            s.setShareAmount(s.getShareAmount().add(roundedTaxSplit));
+            // BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,2, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
+            // BigDecimal roundedTaxSplit = taxSplit.setScale(2, RoundingMode.HALF_EVEN);
+            // s.setShareAmount(s.getShareAmount().add(roundedTaxSplit));
+
+            BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,4, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
+
+            s.setShareAmount((s.getShareAmount().add(taxSplit)).setScale(2, RoundingMode.HALF_EVEN));
             }
         processedTrans.setSharesSplit(sharesSplit);
         totalAmount = totalAmount.add(trans.getGst());

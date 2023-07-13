@@ -25,7 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: SocialAuthService
   ) {}
 
-  hide = true;
+  hide1 = true;
+  hide2 = true;
   isLoginMode = true;
   isLoading = false;
 
@@ -148,6 +149,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     // });
   }
 
+  invalidSignupForm() {
+    return (
+      this.signupForm.invalid ||
+      this.signupForm.controls['password'].value !=
+        this.signupForm.controls['password2'].value
+    );
+  }
+
   ngOnDestroy(): void {
     this.userSub$.unsubscribe();
   }
@@ -172,6 +181,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         Validators.email,
       ]),
       password: this.fb.control<string>('abcd1234', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(32),
+      ]),
+      password2: this.fb.control<string>('abcd1234', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(32),

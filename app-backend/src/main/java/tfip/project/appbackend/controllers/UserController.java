@@ -57,7 +57,7 @@ public class UserController {
                                     .body(Json.createObjectBuilder().add("error", Json.createObjectBuilder().add("message", e.getMessage())).build().toString());
         } catch (JsonProcessingException e) {
             
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                     .body(Json.createObjectBuilder().add("error", Json.createObjectBuilder().add("message", e.getMessage())).build().toString());
         }
     }
@@ -103,12 +103,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                     .body(Json.createObjectBuilder().add("error", Json.createObjectBuilder().add("message", e.getMessage())).build().toString());
         } 
-
-        //get google token
-        //send to firebase, receive localid
-        //check if email in user repo, otherwise add to user repo
-        //return user data with localid, token, tokenexpiration etc
-        //on frontend, navigate to home
     }
 
     @GetMapping(path = "/{userEmail}/add-friend")
@@ -138,11 +132,38 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK)
                                     .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                             .add("error", e.getMessage())
                                             .build()
                                             .toString());
+        }
+    }
+
+    @GetMapping(path = "/request-code")
+    public ResponseEntity<String> requestResetCode(@RequestParam String email){
+
+        try {
+            userSvc.requestPasswordResetCode(email);
+            return ResponseEntity.ok().build();
+        } catch (HttpClientErrorException ex) {
+            return ResponseEntity.status(ex.getStatusCode())
+                                    .body(ex.getResponseBodyAsString());
+        }
+
+    }
+
+    @PostMapping(path = "/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody MultiValueMap<String,String> form){
+        String oobCode = form.getFirst("oobCode");
+        String newPassword = form.getFirst("newPassword");
+
+        try {
+            String email = userSvc.resetPassword(oobCode, newPassword);
+            return ResponseEntity.ok(Json.createObjectBuilder().add("email", email).build().toString());
+        } catch (HttpClientErrorException ex) {
+            return ResponseEntity.status(ex.getStatusCode())
+                                    .body(ex.getResponseBodyAsString());
         }
     }
 }

@@ -15,3 +15,25 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+@media only screen and (max-width: 600px) {
+  .main-logo-label {
+    display: none;
+  }
+  .icon-label {
+    display: none;
+  }
+  .nav-button-first {
+    margin-left: 5px;
+    width: 20px;
+  }
+  .nav-button {
+    margin-left: 0px;
+    width: 20px;
+  }
+  .nav-button-end {
+    margin-right: 0px;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+}

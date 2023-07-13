@@ -1,0 +1,25 @@
+<div class="container-main">
+  <h3>Reset Password</h3>
+  <p>Enter your email below to send a one-time code to reset your password.</p>
+  <form [formGroup]="form" (submit)="requestCode()">
+    <input
+      type="text"
+      size="50"
+      formControlName="email"
+      style="padding: 8px; font-size: 12pt"
+    />
+    <br />
+    <div class="form-pw-reset" [routerLink]="['/reset-password']">
+      I already have a code
+    </div>
+    <button
+      mat-raised-button
+      color="basic"
+      type="submit"
+      style="margin-top: 20px"
+      [disabled]="form.invalid"
+    >
+      Send Code
+    </button>
+  </form>
+</div>

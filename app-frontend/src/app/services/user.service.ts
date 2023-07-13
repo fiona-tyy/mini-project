@@ -113,40 +113,7 @@ export class UserService {
       this.activeUser = loadedUser;
       this.autoLogout(loadedUser.token_expiration_date - new Date().getTime());
     }
-
-    // const loadedUser = new User(
-    //   userData.email,
-    //   userData.id,
-    //   userData._token,
-    //   new Date(userData._tokenExpirationDate)
-    // );
-
-    // if (loadedUser.token) {
-    //   this.user.next(loadedUser);
-    //   const expirationDuration =
-    //     new Date(userData._tokenExpirationDate).getTime() -
-    //     new Date().getTime();
-    //   this.autoLogout(expirationDuration);
-    // }
   }
-
-  // getActiveUser(email: string) {
-  //   const form = new HttpParams().set('email', email);
-
-  //   const headers = new HttpHeaders().set(
-  //     'Content-Type',
-  //     'application/x-www-form-urlencoded'
-  //   );
-
-  //   return firstValueFrom(
-  //     this.http.post<User>('/api/user', form.toString(), { headers })
-  //   );
-  // }
-
-  //friends-1
-  // getFriendsOfActiveUser(userId: String) {
-  //   return this.http.get<Friend[]>('/api/user/' + userId + '/friends');
-  // }
 
   getFriendsOfActiveUser() {
     return this.user.pipe(
@@ -167,7 +134,26 @@ export class UserService {
         });
       })
     );
-    // return this.http.get('/api/user/' + userEmail + '/add-friend', { params });
+  }
+
+  requestCode(email: string) {
+    const params = new HttpParams().set('email', email);
+    return this.http
+      .get('/api/user/request-code', { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  resetPassword(code: string, password: string) {
+    const form = new HttpParams()
+      .set('oobCode', code)
+      .set('newPassword', password);
+    const headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
+    return this.http
+      .post<{email:string}>('/api/user/new', form.toString(), { headers })
+      .pipe(catchError(this.handleError));
   }
 
   logout() {
@@ -199,12 +185,24 @@ export class UserService {
           errorMessage = 'An account with this email already exists.';
           break;
         case 'EMAIL_NOT_FOUND':
+          errorMessage = 'Email not found';
+          break;
         case 'INVALID_PASSWORD':
-          errorMessage = 'Email and/or password is incorrect.';
+          errorMessage = 'Password is incorrect.';
           break;
         case 'TOO_MANY_ATTEMPTS_TRY_LATER':
           errorMessage =
             'Too many unsuccessful login attempts. Try again later.';
+          break;
+        case 'EXPIRED_OOB_CODE':
+          errorMessage = 'The code has expired. Request for a new code.';
+          break;
+        case 'INVALID_OOB_CODE':
+          errorMessage = 'The code is invalid.';
+          break;
+        case 'USER_DISABLED':
+          errorMessage =
+            'The user account has been disabled by an administrator.';
           break;
       }
     }

@@ -28,6 +28,8 @@ public class UserService {
 
     private String LOGIN_AUTH_URL="https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword";
     private String GOOGLE_LOGIN_URL="https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp";
+    private String REQUEST_CODE = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode";
+    private String RESET_PASSWORD = "https://identitytoolkit.googleapis.com/v1/accounts:resetPassword";
 
     @Value ("${FIREBASE_API_KEY}")
     private String API_KEY; 
@@ -57,13 +59,11 @@ public class UserService {
         
         ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
         String payload = resp.getBody();
-        System.out.println(">>> payload from firebase signup:" + payload);
+        // System.out.println(">>> payload from firebase signup:" + payload);
         JsonReader reader = Json.createReader(new StringReader(payload));
         JsonObject obj = reader.readObject();
 
-        
         // String uid = obj.getString("localId");
-
         userRepo.addNewUser( email, name);
         
         ActiveUser user = new ActiveUser();
@@ -75,9 +75,6 @@ public class UserService {
         user.setTokenExpirationDate(expirationDate);
     
         return user;
-
-        //must catch exception
-
     }
 
     public ActiveUser loginWithEmail(String email, String password){
@@ -100,9 +97,9 @@ public class UserService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
 
-        if(resp.getStatusCode() != HttpStatusCode.valueOf(200)){
-            // to write exception handling
-        }
+        // if(resp.getStatusCode() != HttpStatusCode.valueOf(200)){
+        //     // to write exception handling
+        // }
 
         String payload = resp.getBody();
         // System.out.println(">>> payload from firebase login:" + payload);
@@ -167,6 +164,49 @@ public class UserService {
             userRepo.addNewUser(email, user.getName());
         }
         return user;
+    }
+
+    public void requestPasswordResetCode(String email) throws HttpClientErrorException {
+        String url = UriComponentsBuilder
+                        .fromUriString(REQUEST_CODE)
+                        .queryParam("key", API_KEY)
+                        .toUriString();
+                        
+        JsonObject jsonObj = Json.createObjectBuilder()
+                                .add("requestType", "PASSWORD_RESET")
+                                .add("email", email)
+                                .build();
+    
+        RequestEntity<String> req = RequestEntity.post(url)
+                                .body(jsonObj.toString());
+
+        RestTemplate restTemplate = new RestTemplate(); 
+        restTemplate.exchange(req, String.class);
+    }
+
+    public String resetPassword(String oobCode, String newPassword) throws HttpClientErrorException {
+        String url = UriComponentsBuilder
+                        .fromUriString(REQUEST_CODE)
+                        .queryParam("key", API_KEY)
+                        .toUriString();
+                        
+        JsonObject jsonObj = Json.createObjectBuilder()
+                                .add("oobCode", oobCode)
+                                .add("newPassword", newPassword)
+                                .build();
+    
+        RequestEntity<String> req = RequestEntity.post(url)
+                                .body(jsonObj.toString());
+
+        RestTemplate restTemplate = new RestTemplate(); 
+        ResponseEntity<String> resp = restTemplate.exchange(req, String.class);
+        String payload = resp.getBody();
+        JsonReader reader = Json.createReader(new StringReader(payload));
+        JsonObject obj = reader.readObject();
+        String email = obj.getString("email");
+
+        return email;
+
     }
 
     public void addFriend(String userEmail, String friendEmail) throws UserException{

@@ -1,0 +1,13 @@
+.container-main {
+  display: block;
+  padding: 15px;
+}
+
+.form-pw-reset {
+  font-size: 0.9em;
+  color: navy;
+  font-weight: 300;
+  text-align: left;
+  margin-left: 3px;
+  margin-top: 10px;
+}

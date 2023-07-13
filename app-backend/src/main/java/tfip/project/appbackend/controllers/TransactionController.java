@@ -54,7 +54,7 @@ public class TransactionController {
     @PostMapping(path = "/new", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> getLineItems(@RequestPart MultipartFile file){
 
-        // send postrequest to Mindee
+        // // send postrequest to Mindee
         // try {
             
         //     ExpenseData receipt = ocrSvc.callOCRApi(file);
@@ -120,17 +120,17 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
         }catch (UserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
         } catch (TransactionException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
@@ -167,19 +167,18 @@ public class TransactionController {
                 String msgId = msgSvc.sendNotificationToTopic(savedSettlement);
                 System.out.println(">>> Settlement msg sent: " + msgId);
             } catch (FirebaseMessagingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             String resp = objectMapper.writeValueAsString(savedSettlement);
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
         } catch (TransactionException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
@@ -198,7 +197,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                                     .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
                                             .add("error", e.getMessage())
                                             .build()
@@ -215,7 +214,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Json.createObjectBuilder()
                 .add("error", e.getMessage())
                 .build().toString());
@@ -234,7 +233,7 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Json.createObjectBuilder()
                 .add("error", e.getMessage())
                 .build().toString());
@@ -265,14 +264,14 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(Json.createObjectBuilder()
                 .add("error", e.getMessage())
                 .build().toString());
         }
     }
 
-    //for testing
+    //TODO delete for testing only
 
     @PostMapping(path="/test")
     public ResponseEntity<String> testEndpoint(@RequestPart MultipartFile file){

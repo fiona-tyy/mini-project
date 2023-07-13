@@ -1,7 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ExpenseService } from '../services/expense.service';
-import { ExpenseProcessed, SettlementData, Transaction, User } from '../model';
-import { Observable, Subscription, firstValueFrom } from 'rxjs';
+import {
+  ExpenseProcessed,
+  SettlementData,
+  Transaction,
+  User,
+  UserDTO,
+} from '../model';
+import {
+  Observable,
+  Subscription,
+  exhaustMap,
+  firstValueFrom,
+  map,
+  tap,
+} from 'rxjs';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as htmlToImage from 'html-to-image';
@@ -11,11 +24,11 @@ import * as htmlToImage from 'html-to-image';
   templateUrl: './expense-summary.component.html',
   styleUrls: ['./expense-summary.component.css'],
 })
-export class ExpenseSummaryComponent implements OnInit {
-  activeUser!: User | null;
+export class ExpenseSummaryComponent implements OnInit, OnDestroy {
+  activeUser!: UserDTO | null;
   userSub$!: Subscription;
   summary$!: Observable<Transaction[]>;
-  // payer!: User;
+  params$!: Subscription;
   url!: string;
   shareSupported?: boolean;
 
@@ -27,12 +40,14 @@ export class ExpenseSummaryComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activeUser = this.userSvc.activeUser;
-    // this.transaction = this.expenseSvc.transaction;
-    const transactionId = this.activatedRoute.snapshot.params['transactionId'];
-    this.url = 'https://fiona-tyy.com/images/' + transactionId;
-    // post through service
-    this.summary$ = this.expenseSvc.getTransactionById(transactionId);
+    this.userSub$ = this.userSvc.user.subscribe(
+      (user) => (this.activeUser = user!)
+    );
+    this.summary$ = this.activatedRoute.params.pipe(
+      map((params) => params['transactionId']),
+      tap((param) => (this.url = 'https://fiona-tyy.com/images/' + param)),
+      exhaustMap((param) => this.expenseSvc.getTransactionById(param))
+    );
     this.shareSupported = !!navigator.canShare;
   }
 
@@ -56,6 +71,11 @@ export class ExpenseSummaryComponent implements OnInit {
           files: [file],
         });
       });
+  }
+
+  ngOnDestroy(): void {
+    this.userSub$.unsubscribe();
+    // this.params$.unsubscribe();
   }
 }
 

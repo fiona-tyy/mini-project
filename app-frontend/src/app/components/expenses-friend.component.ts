@@ -1,12 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Friend, Transaction, UserDTO } from '../model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subscription, exhaustMap, filter, map, tap } from 'rxjs';
+import {
+  Observable,
+  Subscription,
+  exhaustMap,
+  filter,
+  firstValueFrom,
+  map,
+  tap,
+} from 'rxjs';
 import { ExpenseService } from '../services/expense.service';
 import { UserService } from '../services/user.service';
 import { Title } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
 import { AddSettlementComponent } from './add-settlement.component';
+import { EmailService } from '../services/email.service';
 
 @Component({
   selector: 'app-expenses-friend',
@@ -24,6 +33,7 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private userSvc: UserService,
     private expenseSvc: ExpenseService,
+    private emailSvc: EmailService,
     private router: Router,
     private title: Title,
     public dialog: MatDialog
@@ -85,6 +95,15 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
   }
   sendReminderEmail() {
     //data: friend.email, activeuser name and email, friend.amount_outstanding
+    firstValueFrom(
+      this.emailSvc.sendReminderEmail(this.friend, this.activeUser!)
+    ).then(() =>
+      alert(
+        'Email reminder sent to ' +
+          this.friend.name.slice(0, 1).toUpperCase() +
+          this.friend.name.slice(1)
+      )
+    );
   }
 
   ngOnDestroy(): void {

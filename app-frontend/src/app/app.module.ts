@@ -32,6 +32,9 @@ import { HeaderComponent } from './components/header/header.component';
 import { environment } from 'src/environment/environment';
 import { NotificationService } from './services/notification.service';
 import { NotificationComponent } from './components/notification/notification.component';
+import { RequestCodeComponent } from './components/user/request-code.component';
+import { ResetPasswordComponent } from './components/user/reset-password.component';
+import { EmailService } from './services/email.service';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent, title: 'Login' },
@@ -72,6 +75,16 @@ const appRoutes: Routes = [
     title: 'Friends',
     canActivate: [AuthGuard()],
   },
+  {
+    path: 'request-code',
+    component: RequestCodeComponent,
+    title: 'Reset Password',
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent,
+    title: 'Reset Password',
+  },
   { path: '**', redirectTo: '/', pathMatch: 'full' },
 ];
 
@@ -89,6 +102,8 @@ const appRoutes: Routes = [
     LoadingSpinnerComponent,
     FriendsComponent,
     NotificationComponent,
+    RequestCodeComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,
@@ -113,6 +128,7 @@ const appRoutes: Routes = [
     ExpenseService,
     UserService,
     NotificationService,
+    EmailService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
