@@ -74,10 +74,11 @@
           Add Item
         </button>
       </div>
-      <table formArrayName="line_items" style="width: 100%; display: flex">
+      <table formArrayName="line_items" style="width: 100%; display: flexbox">
         <tr
           *ngFor="let it of itemArr.controls; let i = index"
           [formGroupName]="i"
+          style="width: 100%"
         >
           <td>
             <mat-form-field class="container-form-field-small">
@@ -96,14 +97,12 @@
               />
             </mat-form-field>
           </td>
-          <td>
-            <mat-checkbox (change)="selectAll($event.checked, i)">
-              Select all
-            </mat-checkbox>
-          </td>
+
           <td>
             <mat-checkbox
               [value]="activeUser!.email"
+              class="user"
+              [id]="'id' + i"
               (change)="onCheckboxChange($event, i)"
             >
               You
@@ -112,6 +111,8 @@
           <td *ngFor="let user of selectedFriends">
             <mat-checkbox
               [value]="user.email"
+              class="user"
+              [id]="'id' + i"
               (change)="onCheckboxChange($event, i)"
             >
               {{ user.name | titlecase }}

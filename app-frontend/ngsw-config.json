@@ -10,6 +10,7 @@
           "/favicon.ico",
           "/index.html",
           "/manifest.webmanifest",
+          "/firebase-messaging-sw.js",
           "/*.css",
           "/*.js"
         ],
@@ -34,7 +35,7 @@
   "dataGroups": [
     {
       "name": "api",
-      "urls": ["https://localhost:8080/api/**"],
+      "urls": ["/api/**"],
       "cacheConfig": {
         "maxSize": 100,
         "maxAge": "1d",

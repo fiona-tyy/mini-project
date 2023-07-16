@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   OnInit,
+  QueryList,
   ViewChild,
 } from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -36,6 +37,7 @@ import {
 import { ExpenseService } from '../services/expense.service';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-add-expense',
@@ -52,6 +54,7 @@ export class AddExpenseComponent implements OnInit {
   transactionId!: string;
   totalCost!: number;
   isProcessing = true;
+  selectAll = false;
 
   constructor(
     private fb: FormBuilder,
@@ -111,10 +114,7 @@ export class AddExpenseComponent implements OnInit {
         x++;
       });
     }
-    // console.info('who is sharing', s);
-  }
-  selectAll(checked: boolean, i: number) {
-    //TODO select all method
+    console.info('who is sharing', s);
   }
 
   calculateTotalCost() {
