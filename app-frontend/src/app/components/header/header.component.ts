@@ -32,10 +32,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userSub$ = this.userSvc.user.subscribe((user) => {
       this.activeUser = user;
       this.isAuthenticated = !!user;
+      if (this.isAuthenticated) {
+        this.recent$ = this.expenseSvc.getRecentTransactions();
+      }
     });
-    if (this.isAuthenticated) {
-      this.recent$ = this.expenseSvc.getRecentTransactions();
-    }
+
+    // if (this.isAuthenticated) {
+    //   this.recent$ = this.expenseSvc.getRecentTransactions();
+    // }
   }
 
   getTransaction(transactionId: string) {
@@ -44,6 +48,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   logout() {
     this.userSvc.logout();
+    // this.isAuthenticated = false;
     this.router.navigate(['/']);
   }
 

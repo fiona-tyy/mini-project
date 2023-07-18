@@ -31,6 +31,7 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
   params$!: Subscription;
   url!: string;
   shareSupported?: boolean;
+  transactionId!: string;
 
   constructor(
     private expenseSvc: ExpenseService,
@@ -45,7 +46,10 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
     );
     this.summary$ = this.activatedRoute.params.pipe(
       map((params) => params['transactionId']),
-      tap((param) => (this.url = 'https://fiona-tyy.com/images/' + param)),
+      tap((param) => {
+        this.url = 'https://fiona-tyy.com/images/' + param;
+        this.transactionId = param;
+      }),
       exhaustMap((param) => this.expenseSvc.getTransactionById(param))
     );
     this.shareSupported = !!navigator.canShare;
@@ -67,8 +71,10 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
       })
       .then((file) => {
         navigator.share({
-          text: "[NinjaSplit] Here's how much you owe:",
+          // text: "[NinjaSplit] Here's how much you owe:",
           files: [file],
+          //TODO change url accordingly
+          // url: 'https://bill-split-production.up.railway.app/#/record/' + this.transactionId,
         });
       });
   }

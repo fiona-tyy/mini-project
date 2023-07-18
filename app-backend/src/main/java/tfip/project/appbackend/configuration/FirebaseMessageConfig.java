@@ -1,7 +1,10 @@
 package tfip.project.appbackend.configuration;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,27 +17,27 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 @Configuration
 public class FirebaseMessageConfig {
+
+    @Value("${GOOGLE_CREDENTIALS_JSON}")
+    private String jsonCredentials;
+
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     FirebaseApp firebaseApp() throws IOException {
-        // FirebaseOptions options=null;
-        // try {
-        //     options = FirebaseOptions.builder()
-        //       .setCredentials(GoogleCredentials.getApplicationDefault())
-        //       .build();
-        // } catch (IOException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
-        // if(FirebaseApp.getInstance(FirebaseApp.DEFAULT_APP_NAME) != null){
-        //     return FirebaseApp.getInstance(FirebaseApp.DEFAULT_APP_NAME);
-
-        // }
+        
         FirebaseApp firebaseApp;
         if(FirebaseApp.getApps().isEmpty()){
-            firebaseApp = FirebaseApp.initializeApp(FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.getApplicationDefault())
-            .build());
+            byte[] jsonBytes = jsonCredentials.getBytes();
+            InputStream serviceAccount = new ByteArrayInputStream(jsonBytes);
+            firebaseApp = FirebaseApp.initializeApp(
+                            FirebaseOptions.builder()
+                                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                                    .build()
+            );
+            // firebaseApp = FirebaseApp.initializeApp(FirebaseOptions.builder()
+            // .setCredentials(GoogleCredentials.getApplicationDefault())
+            // .setProjectId("turnkey-guild-390403")
+            // .build());
         } else {
             firebaseApp = FirebaseApp.getApps().get(0);
         }

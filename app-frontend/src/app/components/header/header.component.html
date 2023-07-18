@@ -87,7 +87,7 @@
               <span style="font-weight: 300; font-size: 0.9em">
                 <span style="font-weight: 500">
                   {{
-                    activity.recorded_by.email == activeUser!.email
+                    activity.recorded_by.email == activeUser?.email
                       ? "You"
                       : (activity.recorded_by.name | titlecase)
                   }}

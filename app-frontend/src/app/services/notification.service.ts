@@ -21,7 +21,7 @@ export class NotificationService {
 
   subscribeNotification(token: any) {
     return this.userSvc.user.pipe(
-      map((user) => user!.email.replace('@', '-')),
+      map((user) => user?.email.replace('@', '-')),
       exhaustMap((topic) => {
         return this.http.post('/api/notification/subscribe', {
           token: token,

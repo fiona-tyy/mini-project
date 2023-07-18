@@ -1,4 +1,9 @@
 .container {
-  display: block;
+  display: flexbox;
   padding: 15px;
+}
+
+span.emoji {
+  font-size: 30px;
+  vertical-align: middle;
 }

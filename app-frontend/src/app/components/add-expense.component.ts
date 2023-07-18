@@ -114,7 +114,7 @@ export class AddExpenseComponent implements OnInit {
         x++;
       });
     }
-    console.info('who is sharing', s);
+    // console.info('who is sharing', s);
   }
 
   calculateTotalCost() {
@@ -149,7 +149,7 @@ export class AddExpenseComponent implements OnInit {
     firstValueFrom(this.expenseSvc.saveExpense(expense))
       .then((resp) => {
         this.transactionId = resp.transaction_id;
-        console.info('file? ', !!this.expenseSvc.file);
+        // console.info('file? ', !!this.expenseSvc.file);
         if (!!this.expenseSvc.file) {
           firstValueFrom(
             this.expenseSvc.saveReceipt(

@@ -1,20 +1,29 @@
 <div class="container-main" *ngIf="summary$ | async as s">
-  <div style="text-align: end; position: relative; top: 40px">
+  <div style="position: absolute; text-align: right; width: 90%; z-index: 2">
     <mat-icon
-      style="margin-left: 10px; margin-right: 10px"
+      style="margin-left: 10px"
       color="warn"
       (click)="delete(s[0].transaction_id)"
       >delete</mat-icon
     >
     <mat-icon
       *ngIf="shareSupported"
-      style="margin-left: 10px; margin-right: 10px"
+      style="margin-left: 20px"
       color="primary"
       (click)="share()"
       >share</mat-icon
     >
   </div>
-  <div id="page-summary" style="background-color: white">
+  <div
+    id="page-summary"
+    style="
+      background-color: white;
+      padding: 10px;
+      width: 90%;
+      position: absolute;
+      z-index: 1;
+    "
+  >
     <div *ngIf="s[0].transaction_type == 'expense'">
       <h3>
         <span style="vertical-align: middle"> Expenses for </span>
@@ -35,8 +44,10 @@
         recorded by
         <strong>
           {{
-            s[0].recorded_by.email == activeUser!.email
-              ? "you"
+            !!activeUser
+              ? s[0].recorded_by.email == activeUser.email
+                ? "you"
+                : (s[0].recorded_by.name | titlecase)
               : (s[0].recorded_by.name | titlecase)
           }}
         </strong>
@@ -46,10 +57,13 @@
       <div class="container-content">
         <h4>
           {{
-            s[0].who_paid.email == activeUser!.email
-              ? "You"
+            !!activeUser
+              ? s[0].who_paid.email == activeUser!.email
+                ? "You"
+                : (s[0].who_paid.name | titlecase)
               : (s[0].who_paid.name | titlecase)
           }}
+
           paid ${{ s[0].total_amount | number : "1.2-2" }}
         </h4>
 
@@ -58,22 +72,27 @@
             [routerLink]="['/records']"
             [queryParams]="{
               friendEmail:
-                share.who_borrowed.email == activeUser!.email
+                share.who_borrowed.email == activeUser?.email
                   ? share.who_paid.email
                   : share.who_borrowed.email
             }"
           >
             {{
-              share.who_borrowed.email == activeUser!.email
-                ? "You owe"
+              !!activeUser
+                ? share.who_borrowed.email == activeUser!.email
+                  ? "You owe"
+                  : (share.who_borrowed.name | titlecase) + " owes"
                 : (share.who_borrowed.name | titlecase) + " owes"
             }}
 
             {{
-              share.who_paid.email == activeUser!.email
-                ? "you"
+              !!activeUser
+                ? share.who_paid.email == activeUser!.email
+                  ? "you"
+                  : (share.who_paid.name | titlecase)
                 : (share.who_paid.name | titlecase)
             }}
+
             ${{ share.who_borrowed.share_amount | number : "1.2-2" }}
           </li>
         </ul>
@@ -85,8 +104,10 @@
         recorded by
         <strong>
           {{
-            s[0].recorded_by.email == activeUser!.email
-              ? "you"
+            !!activeUser
+              ? s[0].recorded_by.email == activeUser.email
+                ? "you"
+                : (s[0].recorded_by.name | titlecase)
               : (s[0].recorded_by.name | titlecase)
           }}
         </strong>
@@ -95,40 +116,23 @@
       <div class="container-content">
         <h4>
           {{
-            s[0].who_paid.email == activeUser!.email
-              ? "You"
+            !!activeUser
+              ? s[0].who_paid.email == activeUser.email
+                ? "You"
+                : (s[0].who_paid.name | titlecase)
               : (s[0].who_paid.name | titlecase)
           }}
+
           made a repayment of ${{ s[0].total_amount | number : "1.2-2" }} to
           {{
-            s[0].who_borrowed.email == activeUser!.email
-              ? "you"
+            !!activeUser
+              ? s[0].who_borrowed.email == activeUser.email
+                ? "you"
+                : (s[0].who_borrowed.name | titlecase)
               : (s[0].who_borrowed.name | titlecase)
           }}
         </h4>
-        <br />
       </div>
     </div>
   </div>
-  <!-- <div>
-    <button
-      mat-raised-button
-      color="primary"
-      type="button"
-      style="width: 100px; margin-top: 15px; margin-left: 15px"
-      [routerLink]="['/record', 'new', 'sharing']"
-    >
-      New Expense
-    </button>
-
-    <button
-      mat-raised-button
-      color="warn"
-      type="button"
-      style="width: 100px; margin-top: 15px; margin-left: 15px"
-      (click)="delete(s[0].transaction_id)"
-    >
-      Delete
-    </button>
-  </div> -->
 </div>

@@ -1,6 +1,6 @@
 {
-  "name": "app-frontend",
-  "short_name": "app-frontend",
+  "name": "NinjaSplit",
+  "short_name": "NinjaSplit - Easy, Fuss-free Bill Splitter",
   "gcm_sender_id": "103953800507",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",

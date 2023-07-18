@@ -16,8 +16,8 @@
           ${{ amountOwed | number : "1.2-2" }}
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p *ngIf="amountOwed == 0" style="font-style: italic">
-        Awesome! No one owes you money!
+      <p *ngIf="amountOwed == 0" style="font-style: italic; text-align: center">
+        <span class="emoji">🎉 </span> Awesome! No one owes you money!
       </p>
       <ul *ngFor="let friend of friends">
         <li
@@ -37,8 +37,11 @@
           ${{ amountBorrowed | number : "1.2-2" }}
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p *ngIf="amountBorrowed == 0" style="font-style: italic">
-        Awesome! You do not owe anyone money!
+      <p
+        *ngIf="amountBorrowed == 0"
+        style="font-style: italic; text-align: center"
+      >
+        <span class="emoji">🎉 </span> Awesome! You do not owe anyone money!
       </p>
       <ul *ngFor="let friend of friends">
         <li

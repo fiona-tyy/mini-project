@@ -2,3 +2,18 @@
   display: block;
   padding: 15px;
 }
+
+li {
+  margin: 0;
+  padding-left: 30px;
+  list-style: none;
+  background-image: url("src/assets/images/shuriken.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 20px;
+}
+
+span.emoji {
+  font-size: 30px;
+  vertical-align: middle;
+}

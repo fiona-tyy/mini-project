@@ -35,6 +35,7 @@ import { NotificationComponent } from './components/notification/notification.co
 import { RequestCodeComponent } from './components/user/request-code.component';
 import { ResetPasswordComponent } from './components/user/reset-password.component';
 import { EmailService } from './services/email.service';
+import { SyncService } from './services/sync.service';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent, title: 'Login' },
@@ -61,7 +62,6 @@ const appRoutes: Routes = [
     path: 'record/:transactionId',
     component: ExpenseSummaryComponent,
     title: 'Summary',
-    canActivate: [AuthGuard()],
   },
   {
     path: 'record/new/settlement/:friendId',
@@ -118,8 +118,8 @@ const appRoutes: Routes = [
     ServiceWorkerModule.register('main-sw.js', {
       enabled: !isDevMode(),
       // Register the ServiceWorker as soon as the application is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000',
+      // or after 20 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:20000',
     }),
     AngularFireModule.initializeApp(environment.FirebaseConfig),
     AngularFireMessagingModule,
@@ -129,6 +129,7 @@ const appRoutes: Routes = [
     UserService,
     NotificationService,
     EmailService,
+    SyncService,
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

@@ -65,7 +65,7 @@ public class TransactionSQLRepository {
             ON loans.transaction_id=transactions.id 
             JOIN users AS T1 ON loans.lender_email=T1.email
             JOIN users AS T2 ON loans.borrower_email=T2.email
-            JOIN users AS T3 ON transactions.recorded_by=t3.email
+            JOIN users AS T3 ON transactions.recorded_by=T3.email
             WHERE transaction_id = ?
             """;
 
@@ -73,12 +73,12 @@ public class TransactionSQLRepository {
             DELETE FROM transactions WHERE id = ?
             """;
     public final String GET_RECENT_TRANSACTIONS = """
-            SELECT transaction_id, transaction_type, description, recorded_by, t3.name as recorder_name, recorded_date,lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount 
+            SELECT transaction_id, transaction_type, description, recorded_by, T3.name as recorder_name, recorded_date,lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount 
             FROM loans JOIN transactions 
             ON loans.transaction_id=transactions.id 
             JOIN users AS T1 ON loans.lender_email=T1.email
             JOIN users AS T2 ON loans.borrower_email=T2.email
-            JOIN users AS T3 ON transactions.recorded_by=t3.email
+            JOIN users AS T3 ON transactions.recorded_by=T3.email
             WHERE (lender_email = ? or borrower_email = ?) 
             ORDER BY recorded_date DESC LIMIT 5
             """;
