@@ -35,7 +35,6 @@ import { NotificationComponent } from './components/notification/notification.co
 import { RequestCodeComponent } from './components/user/request-code.component';
 import { ResetPasswordComponent } from './components/user/reset-password.component';
 import { EmailService } from './services/email.service';
-import { SyncService } from './services/sync.service';
 
 const appRoutes: Routes = [
   { path: '', component: LoginComponent, title: 'Login' },
@@ -129,7 +128,7 @@ const appRoutes: Routes = [
     UserService,
     NotificationService,
     EmailService,
-    SyncService,
+
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {

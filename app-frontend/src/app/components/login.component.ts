@@ -117,37 +117,32 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoginMode = !this.isLoginMode;
   }
 
-  loginWithGoogle() {
-    // let user$ = this.authService.authState.pipe(
-    //   tap((user) => {
-    //     this.socialUser = user;
-    //     console.log(this.socialUser);
-    //   }),
-    //   exhaustMap((user) =>
-    //     this.userSvc.loginWithGoogle(user.email, user.idToken)
-    //   )
-    // );
-    // this.authService.authState.subscribe((user) => {
-    //   this.socialUser = user;
-    //   this.isLoggedin = user != null;
-    //   console.log(this.socialUser);
-    // });
-    // // let user$ = this.userSvc.loginWithGoogle(
-    // //   this.socialUser.email,
-    // //   this.socialUser.idToken
-    // // );
-    // user$.subscribe({
-    //   next: (data) => {
-    //     this.isLoading = false;
-    //     this.router.navigate(['/home']);
-    //   },
-    //   error: (error) => {
-    //     console.info(error);
-    //     alert(error);
-    //     this.isLoading = false;
-    //   },
-    // });
-  }
+  // loginWithGoogle() {
+  //   // let user$ = this.authService.authState.pipe(
+  //   //   tap((user) => {
+  //   //     this.socialUser = user;
+  //   //     console.log(this.socialUser);
+  //   //   }),
+  //   //   exhaustMap((user) =>
+  //   //     this.userSvc.loginWithGoogle(user.email, user.idToken)
+  //   //   )
+  //   // );
+  //   // this.authService.authState.subscribe((user) => {
+  //   //   this.socialUser = user;
+  //   //   console.log(this.socialUser);
+  //   // });
+  //   // user$.subscribe({
+  //   //   next: (data) => {
+  //   //     this.isLoading = false;
+  //   //     this.router.navigate(['/home']);
+  //   //   },
+  //   //   error: (error) => {
+  //   //     console.info(error);
+  //   //     alert(error);
+  //   //     this.isLoading = false;
+  //   //   },
+  //   // });
+  // }
 
   invalidSignupForm() {
     return (

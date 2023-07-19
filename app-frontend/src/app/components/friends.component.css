@@ -2,3 +2,20 @@
   display: block;
   padding: 15px;
 }
+
+table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 2px 0px 10px 10px whitesmoke;
+}
+
+tr {
+  border-style: inset;
+  border-color: white;
+
+  padding: 15px;
+}
+td {
+  padding: 15px;
+}

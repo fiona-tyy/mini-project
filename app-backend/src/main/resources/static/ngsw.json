@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1689581332757,
+  "timestamp": 1689773515758,
   "index": "/index.html",
   "assetGroups": [
     {
@@ -16,7 +16,7 @@
         "/firebase-messaging-sw.js",
         "/index.html",
         "/main-sw.js",
-        "/main.5aec9f3ec81c33f4.js",
+        "/main.a28ad75a24acd3fc.js",
         "/manifest.webmanifest",
         "/polyfills.acd8f8bd051d9dbb.js",
         "/runtime.39b7eda84de2e7cf.js",
@@ -48,7 +48,8 @@
         "/assets/images/house.png",
         "/assets/images/ninja-multiple.png",
         "/assets/images/ninja.png",
-        "/assets/images/scroll.png"
+        "/assets/images/scroll.png",
+        "/assets/images/shuriken.png"
       ],
       "patterns": []
     }
@@ -85,11 +86,12 @@
     "/assets/images/ninja-multiple.png": "16d254ccfa6582be3cccb3a013e01fa1b709face",
     "/assets/images/ninja.png": "b97a2b9aca7a9b49db6d556d91c24ed26395cff9",
     "/assets/images/scroll.png": "708a27eb8ac467da2f5b2002919c545e2ca17cbc",
+    "/assets/images/shuriken.png": "59b3907e8454963190a256279d4011ff7211be5d",
     "/favicon.ico": "04c278dba3e54393c4c980f7fd4dcd43796ef813",
     "/firebase-messaging-sw.js": "f61bf20b2f254a3a3287052ab6aa028d85cb2953",
-    "/index.html": "ed41534542c90cd5058c6eefb4d9a8cb8b2c91ab",
+    "/index.html": "6bda35dc865ab7ac97a3f31d31f17403a32509dc",
     "/main-sw.js": "a6ad73d6524909aeda64056edeb0f0af6b88bda1",
-    "/main.5aec9f3ec81c33f4.js": "10f3a0554ffc47375cf8f30cac66d82ac7fd7b61",
+    "/main.a28ad75a24acd3fc.js": "caa416127a2ee6acf4c42591fd7198773f9ed15a",
     "/manifest.webmanifest": "9f5102646040c15028564828e4191824f19d494d",
     "/polyfills.acd8f8bd051d9dbb.js": "b69876ba90915b7f39c8d579ed727055d4715ebc",
     "/runtime.39b7eda84de2e7cf.js": "4dc3eb31f3f065ed6f2d10a6faa89ec08527dd9e",

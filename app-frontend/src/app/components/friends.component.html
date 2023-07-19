@@ -1,6 +1,7 @@
 <div class="container">
   <h3>Friends</h3>
 
+  <h4 style="color: gray">Add New Friends</h4>
   <mat-form-field style="width: 250px">
     <input
       matInput
@@ -8,6 +9,7 @@
       size="50"
       placeholder="Add friend by email"
       (keyup)="sendInput(search.value)"
+      minlength="5"
       #search
     />
   </mat-form-field>
@@ -17,6 +19,7 @@
     type="button"
     (click)="addFriend(search.value)"
     style="margin-left: 20px"
+    [disabled]="search.value.length < 5"
   >
     <mat-icon>add</mat-icon>
     Add
@@ -24,17 +27,26 @@
 
   <hr />
 
-  <table *ngIf="friends$ | async as friends" style="margin-top: 30px">
-    <tr *ngFor="let friend of friends">
-      <td
+  <div *ngIf="friends$ | async as friends">
+    <h4 style="color: gray">Current Friends ( {{ friends.length }} )</h4>
+    <table>
+      <tr
+        *ngFor="let friend of friends"
         [routerLink]="['/records']"
         [queryParams]="{ friendEmail: friend.email }"
       >
-        {{ friend.name | titlecase }}
-        <span style="font-weight: 200; font-style: italic; margin-left: 10px">{{
-          friend.email
-        }}</span>
-      </td>
-    </tr>
-  </table>
+        <td style="width: 20%">
+          {{ friend.name | titlecase }}
+          <!-- <span style="font-weight: 200; font-style: italic; margin-left: 20px">{{
+            friend.email
+          }}</span> -->
+        </td>
+        <td style="border-left: hidden">
+          <span style="font-weight: 200; font-style: italic">{{
+            friend.email
+          }}</span>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>

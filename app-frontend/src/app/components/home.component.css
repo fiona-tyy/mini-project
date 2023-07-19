@@ -7,7 +7,7 @@ li {
   margin: 0;
   padding-left: 30px;
   list-style: none;
-  background-image: url("src/assets/images/shuriken.png");
+  background-image: url("/assets/images/shuriken.png");
   background-repeat: no-repeat;
   background-position: left center;
   background-size: 20px;

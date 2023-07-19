@@ -74,57 +74,59 @@
           Add Item
         </button>
       </div>
-      <table formArrayName="line_items" style="width: 100%; display: flexbox">
-        <tr
-          *ngFor="let it of itemArr.controls; let i = index"
-          [formGroupName]="i"
-          style="width: 100%"
-        >
-          <td>
-            <mat-form-field class="container-form-field-small">
-              <mat-label>Item</mat-label>
-              <input matInput type="text" formControlName="item" />
-            </mat-form-field>
-          </td>
-          <td>
-            <mat-form-field class="container-form-field-small">
-              <mat-label>Amount</mat-label>
-              <input
-                matInput
-                type="number"
-                formControlName="amount"
-                (input)="calculateTotalCost()"
-              />
-            </mat-form-field>
-          </td>
+      <div style="width: 100%; display: flexbox; overflow: auto">
+        <table formArrayName="line_items">
+          <tr
+            *ngFor="let it of itemArr.controls; let i = index"
+            [formGroupName]="i"
+            style="width: 100%"
+          >
+            <td>
+              <mat-form-field class="container-form-field-small">
+                <mat-label>Item</mat-label>
+                <input matInput type="text" formControlName="item" />
+              </mat-form-field>
+            </td>
+            <td>
+              <mat-form-field class="container-form-field-small">
+                <mat-label>Amount</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  formControlName="amount"
+                  (input)="calculateTotalCost()"
+                />
+              </mat-form-field>
+            </td>
 
-          <td>
-            <mat-checkbox
-              [value]="activeUser!.email"
-              class="user"
-              [id]="'id' + i"
-              (change)="onCheckboxChange($event, i)"
-            >
-              You
-            </mat-checkbox>
-          </td>
-          <td *ngFor="let user of selectedFriends">
-            <mat-checkbox
-              [value]="user.email"
-              class="user"
-              [id]="'id' + i"
-              (change)="onCheckboxChange($event, i)"
-            >
-              {{ user.name | titlecase }}
-            </mat-checkbox>
-          </td>
-          <td>
-            <button mat-icon-button type="button" (click)="deleteItem(i)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
+            <td>
+              <mat-checkbox
+                [value]="activeUser!.email"
+                class="user"
+                [id]="'id' + i"
+                (change)="onCheckboxChange($event, i)"
+              >
+                You
+              </mat-checkbox>
+            </td>
+            <td *ngFor="let user of selectedFriends">
+              <mat-checkbox
+                [value]="user.email"
+                class="user"
+                [id]="'id' + i"
+                (change)="onCheckboxChange($event, i)"
+              >
+                {{ user.name | titlecase }}
+              </mat-checkbox>
+            </td>
+            <td>
+              <button mat-icon-button type="button" (click)="deleteItem(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
       <br />
       <mat-form-field class="container-form-field-small">
         <mat-label>Service Charge</mat-label>

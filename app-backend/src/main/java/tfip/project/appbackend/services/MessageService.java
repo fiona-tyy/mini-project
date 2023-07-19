@@ -34,13 +34,18 @@ public class MessageService {
     public String sendNotificationToTopic(ExpenseProcessed processed) throws FirebaseMessagingException{
         List<String> topics = new LinkedList<>();
         for(ShareSplit ss : processed.getSharesSplit()){
+            if(!processed.getRecordedBy().getEmail().equals(ss.getEmail())){
                 topics.add(String.format("'%s' in topics", ss.getEmail().replace("@", "-")));
+            }
+        }
+        if(!processed.getRecordedBy().getEmail().equals(processed.getWhoPaid().getEmail())){
+            topics.add(String.format("'%s' in topics", processed.getWhoPaid().getEmail().replace("@", "-")));
+
         }
 
         String condition = String.join(" || ", topics);
         System.out.println(">>condition: " + condition);
 
-        // String condition = "'abc-email.com' in topics";
 
         Message msg = Message.builder()
                             .setNotification(Notification.builder().setTitle("New Expense").setBody(Util.toTitleCase(processed.getRecordedBy().getName()) + " added an expense for " + Util.toTitleCase( processed.getDescription())).build())
