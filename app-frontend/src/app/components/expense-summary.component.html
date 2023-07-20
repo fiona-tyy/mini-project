@@ -99,7 +99,17 @@
       </div>
     </div>
     <div *ngIf="s[0].transaction_type == 'settlement'">
-      <h3>Repayment</h3>
+      <h3>
+        <span style="vertical-align: middle"> Repayment </span>
+        <span
+          *ngIf="s[0].attachment == 'Y'"
+          style="vertical-align: middle; margin-left: 10px"
+        >
+          <a [href]="url" target="_blank">
+            <mat-icon>receipt</mat-icon>
+          </a>
+        </span>
+      </h3>
       <p style="font-style: italic; font-size: smaller">
         recorded by
         <strong>

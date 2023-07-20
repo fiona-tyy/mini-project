@@ -136,33 +136,37 @@ export class AddExpenseComponent implements OnInit {
     };
     expense.recorded_by = user;
     expense.recorded_date = new Date().getTime();
+    expense.transaction_type = 'expense';
     if (!!this.expenseSvc.file) {
       expense.attachment = 'Y';
     } else {
       expense.attachment = 'N';
     }
 
-    // firstValueFrom(this.expenseSvc.saveExpense(expense)).then((resp) => {
-    //   this.transactionId = resp.transaction_id;
-    //   this.router.navigate(['/record', this.transactionId]);
-    // });
-    firstValueFrom(this.expenseSvc.saveExpense(expense))
-      .then((resp) => {
-        this.transactionId = resp.transaction_id;
-        // console.info('file? ', !!this.expenseSvc.file);
-        if (!!this.expenseSvc.file) {
-          firstValueFrom(
-            this.expenseSvc.saveReceipt(
-              this.transactionId,
-              this.expenseSvc.file
-            )
-          );
-        }
-      })
-      .then(() => {
+    this.expenseSvc
+      .saveExpense(expense, this.expenseSvc.file)
+      .subscribe((data) => {
         this.expenseSvc.file = null;
-        this.router.navigate(['/record', this.transactionId]);
+        this.router.navigate(['/record', data.transaction_id]);
       });
+
+    // firstValueFrom(this.expenseSvc.saveExpense(expense))
+    //   .then((resp) => {
+    //     this.transactionId = resp.transaction_id;
+    //     // console.info('file? ', !!this.expenseSvc.file);
+    //     if (!!this.expenseSvc.file) {
+    //       firstValueFrom(
+    //         this.expenseSvc.saveReceipt(
+    //           this.transactionId,
+    //           this.expenseSvc.file
+    //         )
+    //       );
+    //     }
+    //   })
+    //   .then(() => {
+    //     this.expenseSvc.file = null;
+    //     this.router.navigate(['/record', this.transactionId]);
+    //   });
   }
 
   private createForm(r: ReceiptResponseData | null): FormGroup {

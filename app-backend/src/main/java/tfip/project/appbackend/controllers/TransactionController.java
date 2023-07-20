@@ -1,7 +1,6 @@
 package tfip.project.appbackend.controllers;
 
-import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import tfip.project.appbackend.models.ExpenseData;
 import tfip.project.appbackend.models.ExpenseProcessed;
 import tfip.project.appbackend.models.Friend;
 import tfip.project.appbackend.models.SettlementData;
-import tfip.project.appbackend.models.ShareSplit;
 import tfip.project.appbackend.models.Transaction;
 import tfip.project.appbackend.services.MessageService;
 import tfip.project.appbackend.services.ReceiptOCRService;
@@ -70,7 +68,7 @@ public class TransactionController {
         // }
         
 
-        //placeholder items -to be replaced
+        //TODO placeholder items -to be replaced
         JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
 
         arrBuilder.add(Json.createObjectBuilder()
@@ -87,7 +85,7 @@ public class TransactionController {
 
         JsonObject result = Json.createObjectBuilder()
                                 .add("description", "WALA")
-                                .add("date", 1685548800*1000)
+                                .add("date", new Date().getTime())
                                 .add("service_charge", 6.20)
                                 .add("gst", 4.50)
                                 .add("line_items", arrBuilder)
@@ -97,19 +95,13 @@ public class TransactionController {
         // to replace above
     }
 
-    @PostMapping(path = "/save", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> postNewTransaction(@RequestBody String payload){
-        // System.out.println(">> payload" + payload);
+    @PostMapping(path = "/expense", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> postNewTransaction(@RequestPart String expense, @RequestPart(required = false) MultipartFile file){
         ObjectMapper objectMapper = new ObjectMapper();
         ExpenseData trans;
         try {
-            trans = objectMapper.readValue(payload, ExpenseData.class);
-            // System.out.println(">> mapped transaction from Json " + trans);
-            ExpenseProcessed processed = transSvc.processTransaction(trans);
-            // List<String> topics = new LinkedList<>();
-            // for(ShareSplit ss : processed.getSharesSplit()){
-            //     topics.add(ss.getEmail().replace("@", "-"));
-            // }
+            trans = objectMapper.readValue(expense, ExpenseData.class);
+            ExpenseProcessed processed = transSvc.processTransaction(trans, file);
             try {
                 String msgId = msgSvc.sendNotificationToTopic(processed);
                 System.out.println(">>message sent "+ msgId);
@@ -134,35 +126,75 @@ public class TransactionController {
                                 .body(Json.createObjectBuilder()
                                     .add("error", e.getMessage())
                                     .build().toString());
-        }
+        } 
     }
 
-    @PostMapping(path = "/save-receipt", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> saveReceipt(@RequestPart String transactionId, @RequestPart MultipartFile file){
-        // System.out.println(">>in saving receipt method");
-        try {
-            String url = transSvc.uploadReceipt(transactionId, file);
-            System.out.println(url);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                            .body(Json.createObjectBuilder().add("url", url).build().toString());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Json.createObjectBuilder()
-                .add("error", e.getMessage())
-                .build().toString());
-        }
-    }
+    // @PostMapping(path = "/save", consumes = MediaType.APPLICATION_JSON_VALUE)
+    // public ResponseEntity<String> postNewTransaction(@RequestBody String payload){
+    //     // System.out.println(">> payload" + payload);
+    //     ObjectMapper objectMapper = new ObjectMapper();
+    //     ExpenseData trans;
+    //     try {
+    //         trans = objectMapper.readValue(payload, ExpenseData.class);
+    //         // System.out.println(">> mapped transaction from Json " + trans);
+    //         ExpenseProcessed processed = transSvc.processTransaction(trans);
+    //         // List<String> topics = new LinkedList<>();
+    //         // for(ShareSplit ss : processed.getSharesSplit()){
+    //         //     topics.add(ss.getEmail().replace("@", "-"));
+    //         // }
+    //         try {
+    //             String msgId = msgSvc.sendNotificationToTopic(processed);
+    //             System.out.println(">>message sent "+ msgId);
+    //         } catch (FirebaseMessagingException e) {
+    //             e.printStackTrace();
+    //         }
+    //         String resp = objectMapper.writeValueAsString(processed);
+    //         return ResponseEntity.status(HttpStatus.OK)
+    //                         .body(resp);
+    //     } catch (JsonProcessingException e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                             .body(Json.createObjectBuilder()
+    //                                 .add("error", e.getMessage())
+    //                                 .build().toString());
+    //     }catch (UserException e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                             .body(Json.createObjectBuilder()
+    //                                 .add("error", e.getMessage())
+    //                                 .build().toString());
+    //     } catch (TransactionException e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                             .body(Json.createObjectBuilder()
+    //                                 .add("error", e.getMessage())
+    //                                 .build().toString());
+    //     }
+    // }
 
-    @PostMapping(path = "/settlement", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> recordSettlement(@RequestBody String payload){
+    // @PostMapping(path = "/save-receipt", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public ResponseEntity<String> saveReceipt(@RequestPart String transactionId, @RequestPart MultipartFile file){
+    //     // System.out.println(">>in saving receipt method");
+    //     try {
+    //         String url = transSvc.uploadReceipt(transactionId, file);
+    //         System.out.println(url);
+    //         return ResponseEntity.status(HttpStatus.CREATED)
+    //                         .body(Json.createObjectBuilder().add("url", url).build().toString());
+    //     } catch (IOException e) {
+    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+    //         .body(Json.createObjectBuilder()
+    //             .add("error", e.getMessage())
+    //             .build().toString());
+    //     }
+    // }
+
+    @PostMapping(path = "/settlement", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> recordSettlement(@RequestPart String settlement, @RequestPart(required = false) MultipartFile file){
         // System.out.println(">> settlement payload" + payload);
         ObjectMapper objectMapper = new ObjectMapper();
-        SettlementData settlement;
+        SettlementData settlementData;
         try {
-            settlement = objectMapper.readValue(payload, SettlementData.class);
+            settlementData = objectMapper.readValue(settlement, SettlementData.class);
             // System.out.println(">> mapped settlement after posting: " + settlement);
             // return null;
-            SettlementData savedSettlement = transSvc.recordSettlement(settlement);
+            SettlementData savedSettlement = transSvc.recordSettlement(settlementData, file);
             try {
                 String msgId = msgSvc.sendNotificationToTopic(savedSettlement);
                 System.out.println(">>> Settlement msg sent: " + msgId);
@@ -185,6 +217,38 @@ public class TransactionController {
         }
        
     }
+    // @PostMapping(path = "/settlement", consumes = MediaType.APPLICATION_JSON_VALUE)
+    // public ResponseEntity<String> recordSettlement(@RequestBody String payload){
+    //     // System.out.println(">> settlement payload" + payload);
+    //     ObjectMapper objectMapper = new ObjectMapper();
+    //     SettlementData settlement;
+    //     try {
+    //         settlement = objectMapper.readValue(payload, SettlementData.class);
+    //         // System.out.println(">> mapped settlement after posting: " + settlement);
+    //         // return null;
+    //         SettlementData savedSettlement = transSvc.recordSettlement(settlement);
+    //         try {
+    //             String msgId = msgSvc.sendNotificationToTopic(savedSettlement);
+    //             System.out.println(">>> Settlement msg sent: " + msgId);
+    //         } catch (FirebaseMessagingException e) {
+    //             e.printStackTrace();
+    //         }
+    //         String resp = objectMapper.writeValueAsString(savedSettlement);
+    //         return ResponseEntity.status(HttpStatus.OK)
+    //                         .body(resp);
+    //     } catch (JsonProcessingException e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                             .body(Json.createObjectBuilder()
+    //                                 .add("error", e.getMessage())
+    //                                 .build().toString());
+    //     } catch (TransactionException e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                             .body(Json.createObjectBuilder()
+    //                                 .add("error", e.getMessage())
+    //                                 .build().toString());
+    //     }
+       
+    // }
 
     @GetMapping(path= "/outstanding/{userId}")
     public ResponseEntity<String> getOutstandingWithFriends(@PathVariable String userId){
@@ -271,24 +335,6 @@ public class TransactionController {
         }
     }
 
-    //TODO delete for testing only
-
-    @PostMapping(path="/test")
-    public ResponseEntity<String> testEndpoint(@RequestPart MultipartFile file){
-
-        String transactionId = "xxcd123456";
-        try {
-            String url = transSvc.uploadReceipt(transactionId, file);
-            System.out.println(url);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                            .body(Json.createObjectBuilder().add("url", url).build().toString());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(Json.createObjectBuilder()
-                .add("error", e.getMessage())
-                .build().toString());
-        }
-    
-    }
+   
     
 }

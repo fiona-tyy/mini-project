@@ -56,7 +56,15 @@ public class MessageService {
     
     public String sendNotificationToTopic(SettlementData settlement) throws FirebaseMessagingException{
 
-        String condition = String.join(" || ", String.format("'%s' in topics", settlement.getWhoPaid().getEmail().replace("@", "-")),String.format("'%s' in topics", settlement.getWhoReceived().getEmail().replace("@", "-")));
+        String condition = "";
+        if(!settlement.getRecordedBy().getEmail().equals(settlement.getWhoPaid().getEmail())){
+            condition = String.format("'%s' in topics", settlement.getWhoPaid().getEmail().replace("@", "-"));
+        }
+        if(!settlement.getRecordedBy().getEmail().equals(settlement.getWhoReceived().getEmail())){
+            condition = String.format("'%s' in topics", settlement.getWhoReceived().getEmail().replace("@", "-"));
+        }
+
+        // String condition = String.join(" || ", String.format("'%s' in topics", settlement.getWhoPaid().getEmail().replace("@", "-")),String.format("'%s' in topics", settlement.getWhoReceived().getEmail().replace("@", "-")));
 
         System.out.println(">>condition: " + condition);
 

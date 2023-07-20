@@ -15,7 +15,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ExpenseData {
-    
+    @JsonProperty("transaction_type")
+    String transactionType;
     String description;
     Long date;
     @JsonProperty("who_paid")

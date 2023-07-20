@@ -1,4 +1,5 @@
 export interface ExpenseData {
+  transaction_type: string;
   description: string;
   date: number;
   who_paid: User;
@@ -26,7 +27,7 @@ export interface ExpenseProcessed {
 }
 
 export interface SettlementData {
-  transaction_type?: string;
+  transaction_type: string;
   transaction_id?: string;
   description: string;
   date: number;

@@ -50,6 +50,7 @@ export class AddSettlementComponent implements OnInit {
 
     console.info('file?', !!this.fileInput.nativeElement.files[0]);
     let settlement: SettlementData = {
+      transaction_type: 'settlement',
       description: this.data.description,
       date: new Date().getTime(),
       recorded_by: {
@@ -63,19 +64,30 @@ export class AddSettlementComponent implements OnInit {
       attachment: !!this.fileInput.nativeElement.files[0] ? 'Y' : 'N',
     };
 
-    firstValueFrom(this.expenseSvc.recordPayment(settlement))
-      .then((resp) => {
-        this.transactionId = resp.transaction_id!;
-        if (!!this.fileInput.nativeElement.files[0]) {
-          firstValueFrom(
-            this.expenseSvc.saveReceipt(
-              this.transactionId,
-              this.fileInput.nativeElement.files[0]
-            )
-          );
-        }
-      })
-      .then(() => this.router.navigate(['/record', this.transactionId]));
+    this.expenseSvc
+      .recordPayment(
+        settlement,
+        !!this.fileInput.nativeElement.files[0]
+          ? this.fileInput.nativeElement.files[0]
+          : null
+      )
+      .subscribe((resp) => {
+        this.router.navigate(['/record', resp.transaction_id]);
+      });
+
+    // firstValueFrom(this.expenseSvc.recordPayment(settlement))
+    //   .then((resp) => {
+    //     this.transactionId = resp.transaction_id!;
+    //     if (!!this.fileInput.nativeElement.files[0]) {
+    //       firstValueFrom(
+    //         this.expenseSvc.saveReceipt(
+    //           this.transactionId,
+    //           this.fileInput.nativeElement.files[0]
+    //         )
+    //       );
+    //     }
+    //   })
+    //   .then(() => this.router.navigate(['/record', this.transactionId]));
   }
 
   onFileSelected(event: any) {}

@@ -21,9 +21,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
-import tfip.project.appbackend.models.LineItem;
-import tfip.project.appbackend.models.ReceiptData;
 import tfip.project.appbackend.models.ExpenseData;
+import tfip.project.appbackend.models.LineItem;
 
 @Service
 public class ReceiptOCRService {

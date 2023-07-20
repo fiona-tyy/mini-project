@@ -27,10 +27,18 @@ export class ExpenseService {
     return this.http.post<ReceiptResponseData>('/api/transaction/new', data);
   }
 
-  saveExpense(trans: ExpenseData) {
-    // console.info('saving transaction: ', trans);
-    return this.http.post<ExpenseProcessed>('/api/transaction/save', trans);
+  saveExpense(trans: ExpenseData, file: File | null) {
+    const data = new FormData();
+    data.set('expense', JSON.stringify(trans));
+    if (!!file) {
+      data.set('file', file);
+    }
+    return this.http.post<ExpenseProcessed>('api/transaction/expense', data);
   }
+  // saveExpense(trans: ExpenseData) {
+  //   // console.info('saving transaction: ', trans);
+  //   return this.http.post<ExpenseProcessed>('/api/transaction/save', trans);
+  // }
 
   saveReceipt(transId: string, file: File) {
     const data = new FormData();
@@ -38,11 +46,13 @@ export class ExpenseService {
     data.set('file', file);
     return this.http.post('/api/transaction/save-receipt', data);
   }
-  recordPayment(settlement: SettlementData) {
-    return this.http.post<SettlementData>(
-      '/api/transaction/settlement',
-      settlement
-    );
+  recordPayment(settlement: SettlementData, file: File | null) {
+    const data = new FormData();
+    data.set('settlement', JSON.stringify(settlement));
+    if (!!file) {
+      data.set('file', file);
+    }
+    return this.http.post<SettlementData>('/api/transaction/settlement', data);
   }
 
   // getOutstandingWithFriends(userId: string) {
