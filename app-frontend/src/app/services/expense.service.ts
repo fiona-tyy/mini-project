@@ -27,9 +27,9 @@ export class ExpenseService {
     return this.http.post<ReceiptResponseData>('/api/transaction/new', data);
   }
 
-  saveExpense(trans: ExpenseData, file: File | null) {
+  saveExpense(expense: string, file: File | null) {
     const data = new FormData();
-    data.set('expense', JSON.stringify(trans));
+    data.set('expense', expense);
     if (!!file) {
       data.set('file', file);
     }
@@ -40,15 +40,15 @@ export class ExpenseService {
   //   return this.http.post<ExpenseProcessed>('/api/transaction/save', trans);
   // }
 
-  saveReceipt(transId: string, file: File) {
+  // saveReceipt(transId: string, file: File) {
+  //   const data = new FormData();
+  //   data.set('transactionId', transId);
+  //   data.set('file', file);
+  //   return this.http.post('/api/transaction/save-receipt', data);
+  // }
+  recordPayment(settlement: string, file: File | null) {
     const data = new FormData();
-    data.set('transactionId', transId);
-    data.set('file', file);
-    return this.http.post('/api/transaction/save-receipt', data);
-  }
-  recordPayment(settlement: SettlementData, file: File | null) {
-    const data = new FormData();
-    data.set('settlement', JSON.stringify(settlement));
+    data.set('settlement', settlement);
     if (!!file) {
       data.set('file', file);
     }
@@ -79,9 +79,6 @@ export class ExpenseService {
         );
       })
     );
-    // return this.http.get<Transaction[]>('/api/transaction/records/' + userId, {
-    //   params,
-    // });
   }
 
   getTransactionById(transactionId: string) {

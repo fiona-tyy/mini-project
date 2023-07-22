@@ -74,7 +74,7 @@ export interface Transaction {
   transaction_type: string;
   transaction_id: string;
   description: string;
-  date: Date;
+  date: number;
   who_paid: User;
   total_amount: number;
   who_borrowed: ShareSplit;

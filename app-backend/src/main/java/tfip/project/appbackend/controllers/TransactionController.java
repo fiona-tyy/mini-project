@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 
@@ -187,13 +188,13 @@ public class TransactionController {
 
     @PostMapping(path = "/settlement", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> recordSettlement(@RequestPart String settlement, @RequestPart(required = false) MultipartFile file){
-        // System.out.println(">> settlement payload" + payload);
-        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(">> settlement payload" + settlement);
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
         SettlementData settlementData;
         try {
             settlementData = objectMapper.readValue(settlement, SettlementData.class);
-            // System.out.println(">> mapped settlement after posting: " + settlement);
-            // return null;
+            // System.out.println(">> mapped settlement after posting: " + settlementData);
+
             SettlementData savedSettlement = transSvc.recordSettlement(settlementData, file);
             try {
                 String msgId = msgSvc.sendNotificationToTopic(savedSettlement);
@@ -205,9 +206,10 @@ public class TransactionController {
             return ResponseEntity.status(HttpStatus.OK)
                             .body(resp);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(Json.createObjectBuilder()
-                                    .add("error", e.getMessage())
+                                    .add("json error", e.getMessage())
                                     .build().toString());
         } catch (TransactionException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -224,8 +226,8 @@ public class TransactionController {
     //     SettlementData settlement;
     //     try {
     //         settlement = objectMapper.readValue(payload, SettlementData.class);
-    //         // System.out.println(">> mapped settlement after posting: " + settlement);
-    //         // return null;
+    //         System.out.println(">> mapped settlement after posting: " + settlement);
+    //         return null;
     //         SettlementData savedSettlement = transSvc.recordSettlement(settlement);
     //         try {
     //             String msgId = msgSvc.sendNotificationToTopic(savedSettlement);

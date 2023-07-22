@@ -38,6 +38,7 @@ import { ExpenseService } from '../services/expense.service';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { PostTransactionService } from '../services/post-transaction.service';
 
 @Component({
   selector: 'app-add-expense',
@@ -60,6 +61,7 @@ export class AddExpenseComponent implements OnInit {
     private fb: FormBuilder,
     private expenseSvc: ExpenseService,
     private router: Router,
+    private postTransSvc: PostTransactionService,
     private userSvc: UserService
   ) {}
 
@@ -143,30 +145,28 @@ export class AddExpenseComponent implements OnInit {
       expense.attachment = 'N';
     }
 
-    this.expenseSvc
-      .saveExpense(expense, this.expenseSvc.file)
-      .subscribe((data) => {
-        this.expenseSvc.file = null;
-        this.router.navigate(['/record', data.transaction_id]);
-      });
+    this.postTransSvc.tryPostTransaction(
+      'expense',
+      JSON.stringify(expense),
+      this.expenseSvc.file
+    );
 
-    // firstValueFrom(this.expenseSvc.saveExpense(expense))
-    //   .then((resp) => {
-    //     this.transactionId = resp.transaction_id;
-    //     // console.info('file? ', !!this.expenseSvc.file);
-    //     if (!!this.expenseSvc.file) {
-    //       firstValueFrom(
-    //         this.expenseSvc.saveReceipt(
-    //           this.transactionId,
-    //           this.expenseSvc.file
-    //         )
+    // WORKING CODE BELOW
+    // this.expenseSvc
+    //   .saveExpense(JSON.stringify(expense), this.expenseSvc.file)
+    //   .subscribe({
+    //     next: (data) => {
+    //       this.expenseSvc.file = null;
+    //       this.router.navigate(['/record', data.transaction_id]);
+    //     },
+    //     error: (err) => {
+    //       alert(
+    //         'Network offline - transaction will be posted when network returns online'
     //       );
-    //     }
-    //   })
-    //   .then(() => {
-    //     this.expenseSvc.file = null;
-    //     this.router.navigate(['/record', this.transactionId]);
+    //       this.router.navigate(['/home']);
+    //     },
     //   });
+    // END OF WORKING CODE
   }
 
   private createForm(r: ReceiptResponseData | null): FormGroup {

@@ -148,19 +148,17 @@
     >
       <mat-icon> add </mat-icon>
     </button>
-    <!-- <button
+    <button
       mat-mini-fab
       class="nav-button-end mat-elevation-z0"
       color="primary"
       *ngIf="isAuthenticated"
-      [matMenuTriggerFor]="menu"
     >
-      <mat-icon> account_circle </mat-icon>
+      <mat-icon [ngStyle]="{ color: isOnline ? ' rgb(19, 180, 19)' : 'red' }">
+        account_circle
+      </mat-icon>
     </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>Item 1</button>
-      <button mat-menu-item>Item 2</button>
-    </mat-menu> -->
+
     <button
       mat-mini-fab
       class="nav-button-end mat-elevation-z0"

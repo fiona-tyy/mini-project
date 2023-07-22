@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, exhaustMap, map, take, tap } from 'rxjs';
+import { BehaviorSubject, exhaustMap, filter, map, take, tap } from 'rxjs';
 import { NotificationModel } from '../model';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
@@ -21,7 +21,8 @@ export class NotificationService {
 
   subscribeNotification(token: any) {
     return this.userSvc.user.pipe(
-      map((user) => user?.email.replace('@', '-')),
+      filter((user) => !!user),
+      map((user) => user!.email.replace('@', '-')),
       exhaustMap((topic) => {
         return this.http.post('/api/notification/subscribe', {
           token: token,

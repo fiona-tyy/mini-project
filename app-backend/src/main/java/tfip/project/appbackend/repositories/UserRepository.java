@@ -58,7 +58,7 @@ public class UserRepository {
             User user = new User();
             user.setEmail(rs.getString("email"));
             user.setName(rs.getString("name"));
-            user.setPhoneNumber(rs.getString("phone_number"));
+            // user.setPhoneNumber(rs.getString("phone_number"));
             results.add(user);
         }
 

@@ -11,6 +11,7 @@ import { UserService } from '../services/user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ExpenseService } from '../services/expense.service';
 import { firstValueFrom } from 'rxjs';
+import { PostTransactionService } from '../services/post-transaction.service';
 
 @Component({
   selector: 'app-add-settlement',
@@ -28,6 +29,7 @@ export class AddSettlementComponent implements OnInit {
     private router: Router,
     private userSvc: UserService,
     private expenseSvc: ExpenseService,
+    private postTransSvc: PostTransactionService,
     private dialogRef: MatDialogRef<AddSettlementComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
@@ -51,6 +53,7 @@ export class AddSettlementComponent implements OnInit {
     console.info('file?', !!this.fileInput.nativeElement.files[0]);
     let settlement: SettlementData = {
       transaction_type: 'settlement',
+      transaction_id: '',
       description: this.data.description,
       date: new Date().getTime(),
       recorded_by: {
@@ -63,31 +66,34 @@ export class AddSettlementComponent implements OnInit {
       who_received: this.data.whoReceived,
       attachment: !!this.fileInput.nativeElement.files[0] ? 'Y' : 'N',
     };
+    this.postTransSvc.tryPostTransaction(
+      'settlement',
+      JSON.stringify(settlement),
+      !!this.fileInput.nativeElement.files[0]
+        ? this.fileInput.nativeElement.files[0]
+        : null
+    );
 
-    this.expenseSvc
-      .recordPayment(
-        settlement,
-        !!this.fileInput.nativeElement.files[0]
-          ? this.fileInput.nativeElement.files[0]
-          : null
-      )
-      .subscribe((resp) => {
-        this.router.navigate(['/record', resp.transaction_id]);
-      });
-
-    // firstValueFrom(this.expenseSvc.recordPayment(settlement))
-    //   .then((resp) => {
-    //     this.transactionId = resp.transaction_id!;
-    //     if (!!this.fileInput.nativeElement.files[0]) {
-    //       firstValueFrom(
-    //         this.expenseSvc.saveReceipt(
-    //           this.transactionId,
-    //           this.fileInput.nativeElement.files[0]
-    //         )
+    // WORKING CODE BELOW
+    // this.expenseSvc
+    //   .recordPayment(
+    //     JSON.stringify(settlement),
+    //     !!this.fileInput.nativeElement.files[0]
+    //       ? this.fileInput.nativeElement.files[0]
+    //       : null
+    //   )
+    //   .subscribe({
+    //     next: (resp) => {
+    //       this.router.navigate(['/record', resp.transaction_id]);
+    //     },
+    //     error: (err) => {
+    //       alert(
+    //         'Network offline - transaction will be posted when network returns online'
     //       );
-    //     }
-    //   })
-    //   .then(() => this.router.navigate(['/record', this.transactionId]));
+    //       this.router.navigate(['/home']);
+    //     },
+    //   });
+    // END OF WORKING CODE
   }
 
   onFileSelected(event: any) {}

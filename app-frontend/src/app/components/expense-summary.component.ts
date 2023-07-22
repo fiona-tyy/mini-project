@@ -18,6 +18,7 @@ import {
 import { UserService } from '../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as htmlToImage from 'html-to-image';
+import { PostTransactionService } from '../services/post-transaction.service';
 
 @Component({
   selector: 'app-expense-summary',
@@ -37,7 +38,8 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
     private expenseSvc: ExpenseService,
     private userSvc: UserService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private postTransSvc: PostTransactionService
   ) {}
 
   ngOnInit(): void {
@@ -56,10 +58,16 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
   }
 
   delete(transactionId: string) {
-    firstValueFrom(this.expenseSvc.deleteTransactionById(transactionId))
-      .then(() => this.router.navigate(['/home']))
-      .catch((err) => alert(err.message));
+    this.postTransSvc.tryDeleteRecord(transactionId);
   }
+
+  // WORKING CODE BELOW
+  // delete(transactionId: string) {
+  //   firstValueFrom(this.expenseSvc.deleteTransactionById(transactionId))
+  //     .then(() => this.router.navigate(['/home']))
+  //     .catch((err) => alert(err.message));
+  // }
+  // END OF WORKING CODE
 
   share() {
     let node = document.getElementById('page-summary');
