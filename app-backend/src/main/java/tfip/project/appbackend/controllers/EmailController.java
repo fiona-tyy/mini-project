@@ -27,9 +27,8 @@ public class EmailController {
         JsonReader reader = Json.createReader(new StringReader(payload));
         JsonObject obj = reader.readObject();
 
-        // emailSvc.sendSimpleMessage(obj.getString("toName"), obj.getString("toEmail"), obj.getString("senderName"), obj.getString("senderEmail"), obj.getJsonNumber("amount").doubleValue());
-        //TODO REPLACE WITH ABOVE FOR DEPLOYMENT
-        emailSvc.sendSimpleMessage(obj.getString("toName"), "zyyfiona@hotmail.com", obj.getString("senderName"), obj.getString("senderEmail"), obj.getJsonNumber("amount").doubleValue());
+        emailSvc.sendSimpleMessage(obj.getString("toName"), obj.getString("toEmail"), obj.getString("senderName"), obj.getString("senderEmail"), obj.getJsonNumber("amount").doubleValue());
+       
 
         return ResponseEntity.ok().build();
     }

@@ -10,13 +10,18 @@ import {
 } from '../model';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { UserService } from './user.service';
-import { exhaustMap, take } from 'rxjs';
+import { Subject, exhaustMap, take, tap } from 'rxjs';
 
 @Injectable()
 export class ExpenseService {
   selectedFriends: Friend[] = [];
   expense!: ExpenseData;
   file!: File | null;
+  private _refreshRequired = new Subject<void>();
+
+  get refreshRequired() {
+    return this._refreshRequired;
+  }
 
   constructor(private http: HttpClient, private userSvc: UserService) {}
 

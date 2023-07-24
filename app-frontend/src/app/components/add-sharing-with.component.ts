@@ -58,14 +58,12 @@ export class AddSharingWithComponent implements OnInit {
   }
 
   remove(friend: Friend) {
-    console.log('removed: ', friend);
     const index = this.selectedFriends.findIndex(
       (fr) => fr.email == friend.email
     )!;
     if (index >= 0) {
       this.selectedFriends.splice(index, 1);
     }
-    console.log('selectedfriends after remove: ', this.selectedFriends);
   }
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();

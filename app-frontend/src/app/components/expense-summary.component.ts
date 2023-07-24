@@ -77,10 +77,10 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
       })
       .then((file) => {
         navigator.share({
-          // text: "[NinjaSplit] Here's how much you owe:",
+          text: "[NinjaSplit] Here's how much you owe:",
           files: [file],
-          //TODO change url accordingly
-          // url: 'https://bill-split-production.up.railway.app/#/record/' + this.transactionId,
+          url:
+            'https://ninjasplit.fiona-tyy.com/#/record/' + this.transactionId,
         });
       });
   }

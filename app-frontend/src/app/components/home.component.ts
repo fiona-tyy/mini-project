@@ -44,8 +44,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
 
     if (!!this.activeUser) {
-      console.log('from homepage- activeuser: ', this.activeUser);
-
       this.friendsOutstand$ = this.expenseSvc.getOutstandingWithFriends();
       this.friendSub$ = this.friendsOutstand$
         .pipe(
@@ -63,9 +61,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
     this.token$ = this.afMessaging.requestToken
       .pipe(
-        tap((token) => {
-          console.log('token: ', token);
-        }),
+        // tap((token) => {
+        //   console.log('token: ', token);
+        // }),
         exhaustMap((token) => this.notificationSvc.subscribeNotification(token))
       )
       .subscribe();
