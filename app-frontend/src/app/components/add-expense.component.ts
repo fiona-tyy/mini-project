@@ -2,6 +2,7 @@ import {
   AfterContentInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   QueryList,
   ViewChild,
@@ -37,7 +38,6 @@ import {
 import { ExpenseService } from '../services/expense.service';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { PostTransactionService } from '../services/post-transaction.service';
 
 @Component({
@@ -45,12 +45,12 @@ import { PostTransactionService } from '../services/post-transaction.service';
   templateUrl: './add-expense.component.html',
   styleUrls: ['./add-expense.component.css'],
 })
-export class AddExpenseComponent implements OnInit {
+export class AddExpenseComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   itemArr!: FormArray;
 
   selectedFriends!: Friend[];
-  // userSub$!: Subscription;
+  userSub$!: Subscription;
   activeUser!: UserDTO | null;
   transactionId!: string;
   totalCost!: number;
@@ -67,10 +67,9 @@ export class AddExpenseComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedFriends = this.expenseSvc.selectedFriends;
-    this.activeUser = this.userSvc.activeUser;
-    // this.userSub$ = this.userSvc.user.subscribe(
-    //   (user) => (this.activeUser = user!)
-    // );
+    this.userSub$ = this.userSvc.user.subscribe(
+      (user) => (this.activeUser = user!)
+    );
     this.form = this.createForm(null);
     if (!this.expenseSvc.file) {
       this.isProcessing = false;
@@ -101,7 +100,6 @@ export class AddExpenseComponent implements OnInit {
   }
 
   onCheckboxChange(event: any, i: number) {
-    // console.info('what is this ', event);
     const s = this.itemArr.at(i).get('split_with') as FormArray;
 
     if (event.checked) {
@@ -116,7 +114,6 @@ export class AddExpenseComponent implements OnInit {
         x++;
       });
     }
-    // console.info('who is sharing', s);
   }
 
   calculateTotalCost() {
@@ -169,6 +166,10 @@ export class AddExpenseComponent implements OnInit {
     // END OF WORKING CODE
   }
 
+  ngOnDestroy(): void {
+    this.userSub$.unsubscribe();
+  }
+
   private createForm(r: ReceiptResponseData | null): FormGroup {
     //TODO create lineitem[] with empty control
     this.itemArr = this.createItemsList(!!r ? r.line_items : []);
@@ -176,10 +177,7 @@ export class AddExpenseComponent implements OnInit {
       description: this.fb.control<string>(!!r ? r.description : '', [
         Validators.required,
       ]),
-      date: this.fb.control<Date>(
-        // !!r ? new Date(Date.parse(r.date)) : new Date()
-        !!r ? new Date(r.date) : new Date()
-      ),
+      date: this.fb.control<Date>(!!r ? new Date(r.date) : new Date()),
       who_paid: this.fb.control<string>('', [Validators.required]),
       service_charge: this.fb.control<number>(!!r ? r.service_charge : 0),
       gst: this.fb.control<number>(!!r ? r.gst : 0),

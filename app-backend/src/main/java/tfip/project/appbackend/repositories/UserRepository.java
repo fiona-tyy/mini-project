@@ -26,10 +26,6 @@ public class UserRepository {
             SELECT * FROM users WHERE email = ?
             """;
     
-    // public static final String FIND_USER_BY_ID = """
-    //         SELECT * FROM users WHERE id = ?
-    //         """;
-    
     public static final String ADD_FRIEND = """
             INSERT INTO friends values (?,?)
             """;

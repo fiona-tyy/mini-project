@@ -41,12 +41,7 @@ export class UserService {
 
     return this.http
       .post<UserDTO>('/api/user/new', form.toString(), { headers })
-      .pipe(
-        catchError(this.handleError)
-        // tap((result) => {
-        //   this.user.next(result);
-        // })
-      );
+      .pipe(catchError(this.handleError));
   }
 
   login(email: string, password: string) {
@@ -152,7 +147,7 @@ export class UserService {
       'application/x-www-form-urlencoded'
     );
     return this.http
-      .post<{email:string}>('/api/user/new', form.toString(), { headers })
+      .post<{ email: string }>('/api/user/new', form.toString(), { headers })
       .pipe(catchError(this.handleError));
   }
 

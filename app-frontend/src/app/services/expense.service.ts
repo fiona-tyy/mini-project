@@ -35,17 +35,7 @@ export class ExpenseService {
     }
     return this.http.post<ExpenseProcessed>('api/transaction/expense', data);
   }
-  // saveExpense(trans: ExpenseData) {
-  //   // console.info('saving transaction: ', trans);
-  //   return this.http.post<ExpenseProcessed>('/api/transaction/save', trans);
-  // }
 
-  // saveReceipt(transId: string, file: File) {
-  //   const data = new FormData();
-  //   data.set('transactionId', transId);
-  //   data.set('file', file);
-  //   return this.http.post('/api/transaction/save-receipt', data);
-  // }
   recordPayment(settlement: string, file: File | null) {
     const data = new FormData();
     data.set('settlement', settlement);
@@ -55,7 +45,6 @@ export class ExpenseService {
     return this.http.post<SettlementData>('/api/transaction/settlement', data);
   }
 
-  // getOutstandingWithFriends(userId: string) {
   getOutstandingWithFriends() {
     return this.userSvc.user.pipe(
       take(1),
@@ -67,7 +56,6 @@ export class ExpenseService {
     );
   }
 
-  // getTransactionsWithFriend(userId: string, friendId: string) {
   getTransactionsWithFriend(friendId: string) {
     const params = new HttpParams().set('friendId', friendId);
     return this.userSvc.user.pipe(
@@ -100,16 +88,4 @@ export class ExpenseService {
       })
     );
   }
-
-  // payNow(amount: number) {
-  //   const form = new HttpParams().set('amount', amount * 100);
-
-  //   const headers = new HttpHeaders().set(
-  //     'Content-Type',
-  //     'application/x-www-form-urlencoded'
-  //   );
-  //   return this.http.post('/api/payment/payment-intent', form.toString(), {
-  //     headers,
-  //   });
-  // }
 }

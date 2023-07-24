@@ -29,7 +29,6 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
   activeUser!: UserDTO | null;
   userSub$!: Subscription;
   summary$!: Observable<Transaction[]>;
-  params$!: Subscription;
   url!: string;
   shareSupported?: boolean;
   transactionId!: string;
@@ -38,7 +37,6 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
     private expenseSvc: ExpenseService,
     private userSvc: UserService,
     private activatedRoute: ActivatedRoute,
-    private router: Router,
     private postTransSvc: PostTransactionService
   ) {}
 
@@ -89,7 +87,6 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSub$.unsubscribe();
-    // this.params$.unsubscribe();
   }
 }
 

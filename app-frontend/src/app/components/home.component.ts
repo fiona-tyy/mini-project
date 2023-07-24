@@ -27,8 +27,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   userSub$!: Subscription;
   friendSub$!: Subscription;
   friendsOutstand$!: Observable<Friend[]>;
-  outstanding$!: Subscription;
-  // friends!: Friend[];
+  token$!: Subscription;
+  // outstanding$!: Subscription;
 
   constructor(
     private router: Router,
@@ -43,17 +43,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       (user) => (this.activeUser = user!)
     );
 
-    // this.activeUser = this.userSvc.activeUser;
     if (!!this.activeUser) {
-      console.info('from homepage- activeuser: ', this.activeUser);
+      console.log('from homepage- activeuser: ', this.activeUser);
 
-      //gets outstanding regardless of whether friends
       this.friendsOutstand$ = this.expenseSvc.getOutstandingWithFriends();
       this.friendSub$ = this.friendsOutstand$
         .pipe(
           tap((result) => {
-            // this.userSvc.friendsOutstanding = result;
-            // console.info(this.userSvc.friends);
             result.forEach((f) => {
               if (f.amount_outstanding > 0) {
                 this.amountOwed += f.amount_outstanding;
@@ -65,11 +61,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     }
-    this.afMessaging.requestToken
+    this.token$ = this.afMessaging.requestToken
       .pipe(
         tap((token) => {
-          console.info('token: ', token);
-          // this.token = token;
+          console.log('token: ', token);
         }),
         exhaustMap((token) => this.notificationSvc.subscribeNotification(token))
       )
@@ -80,8 +75,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/record', 'new', 'sharing']);
   }
 
-  getFriendExpenses(friendEmail: string) {
-    const queryParams: Params = { friendEmail: friendEmail };
+  getFriendExpenses(friendEmail: string, friendName: string) {
+    const queryParams: Params = {
+      friendEmail: friendEmail,
+      friendName: friendName,
+    };
     this.router.navigate(['/records'], {
       queryParams,
     });
@@ -89,7 +87,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.userSub$.unsubscribe();
-    //unsubscribe from friendSub$
     this.friendSub$.unsubscribe();
+    this.token$.unsubscribe();
   }
 }

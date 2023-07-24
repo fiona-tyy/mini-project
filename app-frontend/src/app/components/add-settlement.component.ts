@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -10,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ExpenseService } from '../services/expense.service';
-import { firstValueFrom } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { PostTransactionService } from '../services/post-transaction.service';
 
 @Component({
@@ -18,10 +19,11 @@ import { PostTransactionService } from '../services/post-transaction.service';
   templateUrl: './add-settlement.component.html',
   styleUrls: ['./add-settlement.component.css'],
 })
-export class AddSettlementComponent implements OnInit {
+export class AddSettlementComponent implements OnInit, OnDestroy {
   activeUser!: UserDTO | null;
   friendId!: string;
   transactionId!: string;
+  userSub$!: Subscription;
   @ViewChild('fileUpload') fileInput!: ElementRef;
 
   constructor(
@@ -41,19 +43,14 @@ export class AddSettlementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.activeUser = this.userSvc.activeUser;
-    // this.friendId = this.activatedRoute.snapshot.params['friendId'];
-    // console.info('friendId: ', this.friendId);
+    this.userSub$ = this.userSvc.user.subscribe(
+      (user) => (this.activeUser = user!)
+    );
   }
 
   recordPayment() {
-    console.info('paid: ', this.data.amount);
-    console.info('paid: ', this.data.description);
-
-    console.info('file?', !!this.fileInput.nativeElement.files[0]);
     let settlement: SettlementData = {
       transaction_type: 'settlement',
-      transaction_id: '',
       description: this.data.description,
       date: new Date().getTime(),
       recorded_by: {
@@ -97,4 +94,8 @@ export class AddSettlementComponent implements OnInit {
   }
 
   onFileSelected(event: any) {}
+
+  ngOnDestroy(): void {
+    this.userSub$.unsubscribe();
+  }
 }

@@ -180,7 +180,6 @@ public class TransactionSQLRepository {
 
     public List<Transaction> getRecentTransactions(String userEmail){
 
-        // SELECT transaction_id, transaction_type, description, recorded_by, t3.name as recorder_name, recorded_date,lender_email, T1.name as lender_name, borrower_email, T2.name as borrower_name, amount
         List<Transaction> transactions = new LinkedList<>();
         SqlRowSet rs = template.queryForRowSet(GET_RECENT_TRANSACTIONS, userEmail, userEmail);
         while(rs.next()){

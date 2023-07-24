@@ -31,11 +31,4 @@ export class NotificationService {
       })
     );
   }
-
-  //   sendNotification() {
-  //     return this.userSvc.user.pipe(
-  //       map((user) => user!.email.replace('@', '-'))
-  //       //   tap((email) => console.info('replaced: ', email))
-  //     );
-  //   }
 }

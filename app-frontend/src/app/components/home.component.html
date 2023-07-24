@@ -22,7 +22,7 @@
       <ul *ngFor="let friend of friends">
         <li
           *ngIf="friend.amount_outstanding! > 0"
-          (click)="getFriendExpenses(friend.email)"
+          (click)="getFriendExpenses(friend.email, friend.name)"
         >
           {{ friend.name | titlecase }} owes you ${{
             friend.amount_outstanding! | number : "1.2-2"
@@ -46,7 +46,7 @@
       <ul *ngFor="let friend of friends">
         <li
           *ngIf="friend.amount_outstanding! < 0"
-          (click)="getFriendExpenses(friend.email)"
+          (click)="getFriendExpenses(friend.email, friend.name)"
         >
           You owe {{ friend.name | titlecase }} ${{
             -friend.amount_outstanding! | number : "1.2-2"
@@ -55,47 +55,4 @@
       </ul>
     </mat-expansion-panel>
   </div>
-  <!-- 
-  <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Total owed to you: </mat-panel-title>
-      <mat-panel-description>
-        ${{ amountOwed | number : "1.2-2" }}
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p *ngIf="amountOwed == 0" style="font-style: italic">
-      Awesome! No one owes you money!
-    </p>
-    <ul *ngFor="let friend of activeUser.friends">
-      <li
-        *ngIf="friend.amount_outstanding! < 0"
-        (click)="getDetails(friend.id)"
-      >
-        {{ friend.name | titlecase }} owes you ${{
-          -friend.amount_outstanding! | number : "1.2-2"
-        }}
-      </li>
-    </ul>
-  </mat-expansion-panel>
-  <mat-expansion-panel hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Total borrowed: </mat-panel-title>
-      <mat-panel-description>
-        ${{ amountBorrowed | number : "1.2-2" }}
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p *ngIf="amountBorrowed == 0" style="font-style: italic">
-      Awesome! You do not owe anyone money!
-    </p>
-    <ul *ngFor="let friend of activeUser.friends">
-      <li
-        *ngIf="friend.amount_outstanding! > 0"
-        (click)="getDetails(friend.id)"
-      >
-        You owe {{ friend.name | titlecase }} ${{
-          friend.amount_outstanding! | number : "1.2-2"
-        }}
-      </li>
-    </ul>
-  </mat-expansion-panel> -->
 </div>

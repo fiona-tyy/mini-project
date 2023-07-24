@@ -58,7 +58,6 @@ public class TransactionService {
         for(LineItem it: trans.getLineItems()){
             
             totalAmount = totalAmount.add(it.getAmount());
-            // BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 2, RoundingMode.HALF_EVEN);
             BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 4, RoundingMode.HALF_EVEN);
 
             for (String str : it.getSplitWith()){
@@ -86,23 +85,15 @@ public class TransactionService {
         
         for (ShareSplit s : sharesSplit){
 
-            // BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,2, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
-            // BigDecimal roundedTaxSplit = taxSplit.setScale(2, RoundingMode.HALF_EVEN);
-            // s.setShareAmount(s.getShareAmount().add(roundedTaxSplit));
-
             BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,4, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
-
             s.setShareAmount((s.getShareAmount().add(taxSplit)).setScale(2, RoundingMode.HALF_EVEN));
             }
+
         processedTrans.setSharesSplit(sharesSplit);
         totalAmount = totalAmount.add(trans.getGst());
         totalAmount = totalAmount.add(trans.getServiceCharge());
         processedTrans.setTotalAmount(totalAmount);
-        // System.out.println(">>> transaction details: " + processedTrans);
-            
-        //add transaction to Mongo
-        // transRepo.logTransaction(processedTrans);
-        
+       
         transSQLRepo.addTransaction(processedTrans.getTransactionId(), processedTrans.getTransactionType(), processedTrans.getDescription(), processedTrans.getDate(), processedTrans.getTotalAmount(), processedTrans.getRecordedBy().getEmail(), processedTrans.getRecordedDate(), processedTrans.getAttachment());
 
         for (ShareSplit s : sharesSplit){
@@ -120,71 +111,6 @@ public class TransactionService {
         }
         return processedTrans;
     }
-    // @Transactional(rollbackFor = TransactionException.class)
-    // public ExpenseProcessed processTransaction (ExpenseData trans) throws UserException, JsonProcessingException, TransactionException{
-
-    //     ExpenseProcessed processedTrans = new ExpenseProcessed();
-    //     String transactionId  = UUID.randomUUID().toString().substring(0, 8);
-    //     processedTrans.setTransactionId(transactionId);
-    //     processedTrans.setDescription(trans.getDescription());
-    //     processedTrans.setDate(trans.getDate());
-    //     processedTrans.setWhoPaid(trans.getRecordedBy());
-    //     processedTrans.setRecordedBy(trans.getRecordedBy());
-    //     processedTrans.setRecordedDate(trans.getRecordedDate());
-    //     processedTrans.setTransactionType("expense");
-    //     processedTrans.setAttachment(trans.getAttachment());
-    
-    //     //logic to calculate split with
-    //     List<String> sharing = new LinkedList<>();
-    //     List<ShareSplit> sharesSplit = new LinkedList<>();
-        
-    //     BigDecimal totalAmount =  BigDecimal.ZERO;
-    //     for(LineItem it: trans.getLineItems()){
-            
-    //         totalAmount = totalAmount.add(it.getAmount());
-    //         BigDecimal average = it.getAmount().divide(BigDecimal.valueOf(it.getSplitWith().size()), 4, RoundingMode.HALF_EVEN);
-
-    //         for (String str : it.getSplitWith()){
-    //             if(!sharing.contains(str)){
-    //                 sharing.add(str);
-    //                 ShareSplit share = new ShareSplit();
-    //                 share.setEmail(str);
-    //                 share.setShareAmount(average);
-    //                 User user;
-    //                 user = userRepo.getUserByEmail(str);
-    //                 share.setName(user.getName());
-    //                 sharesSplit.add(share);
-                   
-    //             } else {
-    //                 for(ShareSplit s : sharesSplit){
-    //                     if(s.getEmail().equals(str)){
-    //                         s.setShareAmount(s.getShareAmount().add(average));
-    //                     }
-    //                 }
-    //             }
-    //         }       
-    //     }
-        
-    //     for (ShareSplit s : sharesSplit){
-    //         BigDecimal taxSplit = (s.getShareAmount().divide(totalAmount,4, RoundingMode.HALF_EVEN).multiply(trans.getGst().add(trans.getServiceCharge())));
-
-    //         s.setShareAmount((s.getShareAmount().add(taxSplit)).setScale(2, RoundingMode.HALF_EVEN));
-    //         }
-    //     processedTrans.setSharesSplit(sharesSplit);
-    //     totalAmount = totalAmount.add(trans.getGst());
-    //     totalAmount = totalAmount.add(trans.getServiceCharge());
-    //     processedTrans.setTotalAmount(totalAmount);
-       
-    //     transSQLRepo.addTransaction(processedTrans.getTransactionId(), processedTrans.getTransactionType(), processedTrans.getDescription(), processedTrans.getDate(), processedTrans.getTotalAmount(), processedTrans.getRecordedBy().getEmail(), processedTrans.getRecordedDate(), processedTrans.getAttachment());
-
-    //     for (ShareSplit s : sharesSplit){
-
-    //         if(!s.getEmail().equals( trans.getWhoPaid().getEmail())){
-    //             transSQLRepo.addLoanOrPayment(transactionId, trans.getWhoPaid().getEmail(), s.getEmail(), s.getShareAmount());
-    //             }
-    //         }
-    //     return processedTrans;
-    // }
 
     @Transactional(rollbackFor = TransactionException.class)
     public SettlementData recordSettlement(SettlementData payment, MultipartFile file) throws TransactionException{
@@ -204,18 +130,6 @@ public class TransactionService {
 
         return payment;
     }
-    // @Transactional(rollbackFor = TransactionException.class)
-    // public SettlementData recordSettlement(SettlementData payment) throws TransactionException{
-
-        
-    //     String transactionId  = UUID.randomUUID().toString().substring(0, 8);
-    //     payment.setTransactionId(transactionId);
-    //     payment.setTransactionType("settlement");
-    //     transSQLRepo.addTransaction(transactionId, payment.getTransactionType(), payment.getDescription(), payment.getDate(), payment.getRepaymentAmount(), payment.getRecordedBy().getEmail(), payment.getRecordedDate(), payment.getAttachment());
-    //     transSQLRepo.addLoanOrPayment(transactionId, payment.getWhoPaid().getEmail(), payment.getWhoReceived().getEmail(), payment.getRepaymentAmount());
-
-    //     return payment;
-    // }
 
     public List<Friend> getOutstandingWithFriends(String userEmail){
 
@@ -238,8 +152,4 @@ public class TransactionService {
         return transSQLRepo.getRecentTransactions(userEmail);
    }
 
-//    public String uploadReceipt(String transactionId, MultipartFile file) throws IOException{
-//         return receiptRepo.uploadReceipt(transactionId, file);
-//    }
-    
 }

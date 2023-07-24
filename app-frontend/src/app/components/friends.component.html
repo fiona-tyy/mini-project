@@ -8,7 +8,6 @@
       type="text"
       size="50"
       placeholder="Add friend by email"
-      (keyup)="sendInput(search.value)"
       minlength="5"
       #search
     />
@@ -33,13 +32,10 @@
       <tr
         *ngFor="let friend of friends"
         [routerLink]="['/records']"
-        [queryParams]="{ friendEmail: friend.email }"
+        [queryParams]="{ friendEmail: friend.email, friendName: friend.name }"
       >
         <td style="width: 20%">
           {{ friend.name | titlecase }}
-          <!-- <span style="font-weight: 200; font-style: italic; margin-left: 20px">{{
-            friend.email
-          }}</span> -->
         </td>
         <td style="border-left: hidden">
           <span style="font-weight: 200; font-style: italic">{{

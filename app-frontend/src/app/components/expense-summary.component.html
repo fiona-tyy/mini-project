@@ -74,7 +74,11 @@
               friendEmail:
                 share.who_borrowed.email == activeUser?.email
                   ? share.who_paid.email
-                  : share.who_borrowed.email
+                  : share.who_borrowed.email,
+              friendName:
+                share.who_borrowed.email == activeUser?.email
+                  ? share.who_paid.name
+                  : share.who_borrowed.name
             }"
           >
             {{

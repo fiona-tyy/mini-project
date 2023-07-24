@@ -64,8 +64,6 @@ public class MessageService {
             condition = String.format("'%s' in topics", settlement.getWhoReceived().getEmail().replace("@", "-"));
         }
 
-        // String condition = String.join(" || ", String.format("'%s' in topics", settlement.getWhoPaid().getEmail().replace("@", "-")),String.format("'%s' in topics", settlement.getWhoReceived().getEmail().replace("@", "-")));
-
         System.out.println(">>condition: " + condition);
 
         Message msg = Message.builder()

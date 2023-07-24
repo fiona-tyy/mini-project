@@ -117,33 +117,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLoginMode = !this.isLoginMode;
   }
 
-  // loginWithGoogle() {
-  //   // let user$ = this.authService.authState.pipe(
-  //   //   tap((user) => {
-  //   //     this.socialUser = user;
-  //   //     console.log(this.socialUser);
-  //   //   }),
-  //   //   exhaustMap((user) =>
-  //   //     this.userSvc.loginWithGoogle(user.email, user.idToken)
-  //   //   )
-  //   // );
-  //   // this.authService.authState.subscribe((user) => {
-  //   //   this.socialUser = user;
-  //   //   console.log(this.socialUser);
-  //   // });
-  //   // user$.subscribe({
-  //   //   next: (data) => {
-  //   //     this.isLoading = false;
-  //   //     this.router.navigate(['/home']);
-  //   //   },
-  //   //   error: (error) => {
-  //   //     console.info(error);
-  //   //     alert(error);
-  //   //     this.isLoading = false;
-  //   //   },
-  //   // });
-  // }
-
   invalidSignupForm() {
     return (
       this.signupForm.invalid ||
@@ -157,11 +130,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   private createLoginForm() {
     return this.fb.group({
-      email: this.fb.control<string>('lily@email.com', [
+      email: this.fb.control<string>('', [
         Validators.required,
         Validators.email,
       ]),
-      password: this.fb.control<string>('abcd1234', [
+      password: this.fb.control<string>('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(32),
@@ -170,17 +143,17 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   private createSignupForm() {
     return this.fb.group({
-      name: this.fb.control<string>('Lily', [Validators.required]),
-      email: this.fb.control<string>('lily@email.com', [
+      name: this.fb.control<string>('', [Validators.required]),
+      email: this.fb.control<string>('', [
         Validators.required,
         Validators.email,
       ]),
-      password: this.fb.control<string>('abcd1234', [
+      password: this.fb.control<string>('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(32),
       ]),
-      password2: this.fb.control<string>('abcd1234', [
+      password2: this.fb.control<string>('', [
         Validators.required,
         Validators.minLength(6),
         Validators.maxLength(32),

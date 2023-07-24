@@ -1,6 +1,11 @@
+.sticky-footer {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: 6rem;
+}
 footer {
-  display: block;
-  position: fixed;
+  /* display: block; */
+  position: absolute;
   bottom: 0px;
   color: grey;
   font-size: x-small;

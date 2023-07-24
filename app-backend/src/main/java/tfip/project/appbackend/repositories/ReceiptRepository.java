@@ -28,7 +28,7 @@ public class ReceiptRepository {
 
         Map<String, String> userData = new HashMap<>();
         userData.put("filename", file.getOriginalFilename());
-        // userData.put("upload-date", (new Date()).toString());
+
 
       // Add object's metadata 
         ObjectMetadata metadata = new ObjectMetadata();

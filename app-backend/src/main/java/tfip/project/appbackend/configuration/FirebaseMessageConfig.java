@@ -34,22 +34,16 @@ public class FirebaseMessageConfig {
                                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                                     .build()
             );
-            // firebaseApp = FirebaseApp.initializeApp(FirebaseOptions.builder()
-            // .setCredentials(GoogleCredentials.getApplicationDefault())
-            // .setProjectId("turnkey-guild-390403")
-            // .build());
+   
         } else {
             firebaseApp = FirebaseApp.getApps().get(0);
         }
         return firebaseApp;
-
-
     }
 
     @Bean
     FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp) {
         return FirebaseMessaging.getInstance(firebaseApp);
-        
     }
-    
+
 }

@@ -1,140 +1,118 @@
-<div class="container" *ngIf="records$ | async as records">
-  <h3>Expenses with {{ friend.name | titlecase }}</h3>
-  <div style="color: #631093">
-    <p *ngIf="friend.amount_outstanding > 0">
-      Overall, {{ friend.name | titlecase }} owes you
-      <strong> ${{ friend.amount_outstanding | number : "1.2-2" }} </strong>
-    </p>
-    <p *ngIf="friend.amount_outstanding < 0">
-      Overall, you owe {{ friend.name | titlecase }}
-      <strong> ${{ -friend.amount_outstanding | number : "1.2-2" }} </strong>
-    </p>
-    <p *ngIf="friend.amount_outstanding == 0">
-      <span class="emoji">🎉 </span>
-      There are no outstanding loans between you and
-      {{ friend.name | titlecase }}
-    </p>
-    <br />
-  </div>
+<div class="container">
+  <div *ngIf="records$ | async as records; else noRecords">
+    <h3>Expenses with {{ friendName | titlecase }}</h3>
+    <div style="color: #631093">
+      <p *ngIf="friend.amount_outstanding > 0">
+        Overall, {{ friend.name | titlecase }} owes you
+        <strong> ${{ friend.amount_outstanding | number : "1.2-2" }} </strong>
+      </p>
+      <p *ngIf="friend.amount_outstanding < 0">
+        Overall, you owe {{ friend.name | titlecase }}
+        <strong> ${{ -friend.amount_outstanding | number : "1.2-2" }} </strong>
+      </p>
+      <p *ngIf="friend.amount_outstanding == 0">
+        <span class="emoji">🎉 </span>
+        There are no outstanding loans between you and
+        {{ friend.name | titlecase }}
+      </p>
+      <br />
+    </div>
 
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openDialog()"
+      style="width: 150px; margin-bottom: 15px; margin-right: 10px"
+      [disabled]="friend.amount_outstanding == 0"
+    >
+      <mat-icon>local_atms</mat-icon>
+      Settle Up
+    </button>
+    <button
+      mat-raised-button
+      color="basic"
+      style="width: 150px; margin-bottom: 15px; margin-left: 10px"
+      [disabled]="friend.amount_outstanding <= 0"
+      (click)="sendReminderEmail()"
+    >
+      <mat-icon> notifications_active </mat-icon>
+      Remind
+    </button>
+    <hr />
+    <table *ngFor="let r of records" width="100%">
+      <tr height="50px" (click)="getTransaction(r.transaction_id)">
+        <td width="20%">{{ r.date | date : "d MMM yyyy" }}</td>
+        <td style="font-weight: bold" width="50%">
+          <span *ngIf="r.transaction_type == 'expense'">
+            {{ r.description | uppercase }}
+            <br />
+            <span style="font-weight: 100; font-style: italic; font-size: 0.9em"
+              >{{
+                r.who_paid.email == activeUser!.email
+                  ? "You"
+                  : (r.who_paid.name | titlecase)
+              }}
+              paid ${{ r.total_amount | number : "1.2-2" }}</span
+            >
+          </span>
+          <span *ngIf="r.transaction_type == 'settlement'">
+            REPAYMENT
+            <br />
+            <span style="font-weight: 100; font-style: italic; font-size: 0.9em"
+              >{{
+                r.who_paid.email == activeUser!.email
+                  ? "You"
+                  : (r.who_paid.name | titlecase)
+              }}
+              returned
+              {{
+                r.who_borrowed.email == activeUser!.email
+                  ? "you"
+                  : (r.who_borrowed.name | titlecase)
+              }}
+              ${{ r.total_amount | number : "1.2-2" }}</span
+            >
+          </span>
+        </td>
+        <td width="30%" style="padding-left: 5px">
+          <span
+            style="color: #1a994f"
+            *ngIf="
+              r.who_paid.email == activeUser!.email &&
+              r.transaction_type == 'expense'
+            "
+          >
+            You lent ${{ r.who_borrowed.share_amount | number : "1.2-2" }}
+          </span>
+          <span
+            style="color: #9d2518"
+            *ngIf="
+              r.who_paid.email != activeUser!.email &&
+              r.transaction_type == 'expense'
+            "
+          >
+            You borrowed ${{
+              r.who_borrowed.share_amount | number : "1.2-2"
+            }}</span
+          >
+          <span *ngIf="r.transaction_type == 'settlement'"> </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<ng-template style="padding: 10px" #noRecords>
+  <h4>
+    There is no transaction record between you and
+    {{ friendName | titlecase }}.
+  </h4>
   <button
     mat-raised-button
     color="primary"
-    (click)="openDialog()"
-    style="width: 150px; margin-bottom: 15px; margin-right: 10px"
-    [disabled]="friend.amount_outstanding == 0"
+    [routerLink]="['/record', 'new', 'sharing']"
   >
-    <mat-icon>local_atms</mat-icon>
-    Settle Up
+    <mat-icon>add</mat-icon>
+    New Expense
   </button>
-  <button
-    mat-raised-button
-    color="basic"
-    style="width: 150px; margin-bottom: 15px; margin-left: 10px"
-    [disabled]="friend.amount_outstanding <= 0"
-    (click)="sendReminderEmail()"
-  >
-    <mat-icon> notifications_active </mat-icon>
-    Remind
-  </button>
-  <hr />
-  <table *ngFor="let r of records" width="100%">
-    <tr height="50px" (click)="getTransaction(r.transaction_id)">
-      <td width="20%">{{ r.date | date : "d MMM yyyy" }}</td>
-      <td style="font-weight: bold" width="50%">
-        <span *ngIf="r.transaction_type == 'expense'">
-          {{ r.description | uppercase }}
-          <br />
-          <span style="font-weight: 100; font-style: italic; font-size: 0.9em"
-            >{{
-              r.who_paid.email == activeUser!.email
-                ? "You"
-                : (r.who_paid.name | titlecase)
-            }}
-            paid ${{ r.total_amount | number : "1.2-2" }}</span
-          >
-        </span>
-        <span *ngIf="r.transaction_type == 'settlement'">
-          REPAYMENT
-          <br />
-          <span style="font-weight: 100; font-style: italic; font-size: 0.9em"
-            >{{
-              r.who_paid.email == activeUser!.email
-                ? "You"
-                : (r.who_paid.name | titlecase)
-            }}
-            returned
-            {{
-              r.who_borrowed.email == activeUser!.email
-                ? "you"
-                : (r.who_borrowed.name | titlecase)
-            }}
-            ${{ r.total_amount | number : "1.2-2" }}</span
-          >
-        </span>
-      </td>
-      <td width="30%" style="padding-left: 5px">
-        <span
-          style="color: #1a994f"
-          *ngIf="
-            r.who_paid.email == activeUser!.email &&
-            r.transaction_type == 'expense'
-          "
-        >
-          You lent ${{ r.who_borrowed.share_amount | number : "1.2-2" }}
-        </span>
-        <span
-          style="color: #9d2518"
-          *ngIf="
-            r.who_paid.email != activeUser!.email &&
-            r.transaction_type == 'expense'
-          "
-        >
-          You borrowed ${{
-            r.who_borrowed.share_amount | number : "1.2-2"
-          }}</span
-        >
-        <span *ngIf="r.transaction_type == 'settlement'"> </span>
-      </td>
-      <!-- <td
-        style="color: #e74c3c"
-        *ngIf="
-          r.who_paid.email != activeUser!.email &&
-          r.transaction_type == 'expense'
-        "
-      >
-        You borrowed ${{ r.who_borrowed.share_amount | number : "1.2-2" }}
-      </td> -->
-      <!-- <td
-        style="font-weight: bold"
-        width="300px"
-        *ngIf="r.transaction_type == 'settlement'"
-      >
-        REPAYMENT
-        <br />
-        <span style="font-weight: 100; font-style: italic; font-size: 0.9em"
-          >{{
-            r.who_paid.email == activeUser!.email
-              ? "You"
-              : (r.who_paid.name | titlecase)
-          }}
-          returned
-          {{
-            r.who_borrowed.email == activeUser!.email
-              ? "you"
-              : (r.who_borrowed.name | titlecase)
-          }}
-          ${{ r.total_amount | number : "1.2-2" }}</span
-        >
-      </td> -->
-    </tr>
-  </table>
-  <!-- <button
-    mat-raised-button
-    type="button"
-    [routerLink]="['/home']"
-    style="width: 100px; margin-top: 15px"
-  >
-    Back
-  </button> -->
-</div>
+</ng-template>

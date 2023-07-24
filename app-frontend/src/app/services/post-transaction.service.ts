@@ -14,7 +14,6 @@ export class PostTransactionService {
   constructor(
     private networkSvc: NetworkService,
     private expenseSvc: ExpenseService,
-    private http: HttpClient,
     private router: Router
   ) {
     this.createIndexedDb();
@@ -47,8 +46,6 @@ export class PostTransactionService {
       });
     }
   }
-
-  //deleteTransaction
 
   tryDeleteRecord(transactionId: string) {
     if (this.networkSvc.isOnline) {
@@ -83,7 +80,7 @@ export class PostTransactionService {
     });
   }
 
-  // add to indexedDB in offline mode
+  // add to indexedDB when in offline mode
   private saveItemToIndexedDb(
     type: string,
     transaction: string,

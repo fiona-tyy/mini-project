@@ -186,7 +186,7 @@ public class UserService {
 
     public String resetPassword(String oobCode, String newPassword) throws HttpClientErrorException {
         String url = UriComponentsBuilder
-                        .fromUriString(REQUEST_CODE)
+                        .fromUriString(RESET_PASSWORD)
                         .queryParam("key", API_KEY)
                         .toUriString();
                         

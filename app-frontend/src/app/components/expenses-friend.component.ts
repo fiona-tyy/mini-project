@@ -28,6 +28,8 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
   friends!: Friend[];
   records$!: Observable<Transaction[]>;
   userSub$!: Subscription;
+  friendName!: string;
+  friendEmail!: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -40,24 +42,28 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const friendEmail = this.activatedRoute.snapshot.queryParams['friendEmail'];
+    this.friendEmail = this.activatedRoute.snapshot.queryParams['friendEmail'];
+    this.friendName = this.activatedRoute.snapshot.queryParams['friendName'];
+    this.title.setTitle('Friend: ' + this.friendName.toUpperCase());
     this.userSub$ = this.userSvc.user.subscribe(
       (user) => (this.activeUser = user!)
     );
+
+    // TO FIX - if there are no transactions with friend, need to also be able to display
     this.records$ = this.expenseSvc.getOutstandingWithFriends().pipe(
       map((frnds) => {
-        return frnds.find((fr) => fr.email == friendEmail);
+        return frnds.find((fr) => fr.email == this.friendEmail);
       }),
+      filter((frd) => !!frd),
       tap((frd) => {
-        (this.friend = frd!),
-          this.title.setTitle('Friend: ' + frd!.name.toUpperCase());
+        this.friend = frd!;
       }),
       exhaustMap((frd) => this.expenseSvc.getTransactionsWithFriend(frd!.email))
     );
   }
 
   getTransaction(transactionId: string) {
-    console.info('transaction id: ', transactionId);
+    console.log('transaction id: ', transactionId);
     this.router.navigate(['/record', transactionId]);
   }
 
@@ -94,7 +100,6 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
     }
   }
   sendReminderEmail() {
-    //data: friend.email, activeuser name and email, friend.amount_outstanding
     firstValueFrom(
       this.emailSvc.sendReminderEmail(this.friend, this.activeUser!)
     ).then(() =>

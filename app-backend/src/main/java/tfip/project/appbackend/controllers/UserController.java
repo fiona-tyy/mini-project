@@ -1,6 +1,5 @@
 package tfip.project.appbackend.controllers;
 
-import java.io.Console;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.json.Json;
-import tfip.project.appbackend.models.Friend;
 import tfip.project.appbackend.models.ActiveUser;
+import tfip.project.appbackend.models.Friend;
 import tfip.project.appbackend.services.UserException;
 import tfip.project.appbackend.services.UserService;
 
@@ -128,7 +127,7 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String resp = objectMapper.writeValueAsString(friends);
-            // System.out.println(">>>friends: " + resp);
+
             return ResponseEntity.status(HttpStatus.OK)
                                     .body(resp);
         } catch (JsonProcessingException e) {

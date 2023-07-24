@@ -50,8 +50,6 @@ public class ReceiptOCRService {
 
         String payload = resp.getBody();
 
-        // System.out.println(">>> payload from ocr api:" + payload);
-
         JsonReader reader = Json.createReader(new StringReader(payload));
         JsonObject obj = reader.readObject();
 
@@ -60,7 +58,6 @@ public class ReceiptOCRService {
         LocalDate localDate = LocalDate.parse(date);
         ZoneId zoneId = ZoneId.systemDefault();
         Long dateEpochMillis = localDate.atStartOfDay(zoneId).toEpochSecond()*1000;
-        // JsonArrayBuilder lineItemsArrBuilder = Json.createArrayBuilder();
         List<LineItem> lineItems = new LinkedList<>();
         JsonArray lineItemsFromReciept = prediction.getJsonArray("line_items");
         lineItemsFromReciept.stream()

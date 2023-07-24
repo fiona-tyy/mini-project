@@ -22,19 +22,13 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./friends.component.css'],
 })
 export class FriendsComponent implements OnInit {
-  activeUser!: UserDTO | null;
+  // activeUser!: UserDTO | null;
 
   userSub$!: Subscription;
-  friendSub$!: Subscription;
+  // friendSub$!: Subscription;
   friends$!: Observable<Friend[]>;
-  // friends!: Friend[];
-  emailInput = new Subject<string>();
 
-  constructor(
-    private router: Router,
-    private userSvc: UserService,
-    private fb: FormBuilder
-  ) {}
+  constructor(private router: Router, private userSvc: UserService) {}
 
   ngOnInit(): void {
     this.friends$ = this.userSvc.getFriendsOfActiveUser();
@@ -49,9 +43,5 @@ export class FriendsComponent implements OnInit {
       .catch((err) => {
         alert(err.error.message);
       });
-  }
-
-  sendInput(input: string) {
-    this.emailInput.next(input);
   }
 }
