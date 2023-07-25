@@ -63,33 +63,6 @@ public class TransactionController {
                                     .add("error", e.getMessage())
                                     .build().toString());
         }
-        
-
-        //TODO placeholder items -to be replaced
-        // JsonArrayBuilder arrBuilder = Json.createArrayBuilder();
-
-        // arrBuilder.add(Json.createObjectBuilder()
-        //                     .add("item","pork strips")
-        //                     .add("amount", 27.0));
-
-        // arrBuilder.add(Json.createObjectBuilder()
-        //                     .add("item","breaded squid")
-        //                     .add("amount", 26.0));
-
-        // arrBuilder.add(Json.createObjectBuilder()
-        //                     .add("item","mango juice")
-        //                     .add("amount", 5.5));
-
-        // JsonObject result = Json.createObjectBuilder()
-        //                         .add("description", "WALA")
-        //                         .add("date", new Date().getTime())
-        //                         .add("service_charge", 6.20)
-        //                         .add("gst", 4.50)
-        //                         .add("line_items", arrBuilder)
-        //                         .build();
-        // return ResponseEntity.status(HttpStatus.OK)
-        //                     .body(result.toString());
-        // to replace above
     }
 
     @PostMapping(path = "/expense", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

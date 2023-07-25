@@ -25,11 +25,6 @@ export class AddSharingWithComponent implements OnInit {
   friendCtrl = new FormControl('');
   friendsInput$!: Observable<Friend[]>;
   selectedFriends: Friend[] = [];
-  // activeUser!: User | null;
-  // friends$!: Observable<Friend[]>;
-  // userSub$!: Subscription;
-  // friendsSub$!: Subscription;
-
   friends!: Friend[] | null;
 
   @ViewChild('friendInput') friendInput!: ElementRef<HTMLInputElement>;

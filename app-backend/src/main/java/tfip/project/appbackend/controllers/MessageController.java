@@ -24,7 +24,6 @@ public class MessageController {
 
     @PostMapping(path = "/subscribe")
     public ResponseEntity<String> subscribeToNotification(@RequestBody String payload) throws JsonMappingException, JsonProcessingException, FirebaseMessagingException{
-        System.out.println(">> subscription payload: "+ payload);
         ObjectMapper objectMapper = new ObjectMapper();
         Subscription sub;
         sub = objectMapper.readValue(payload, Subscription.class);

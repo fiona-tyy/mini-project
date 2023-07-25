@@ -149,7 +149,6 @@ public class UserController {
             return ResponseEntity.status(ex.getStatusCode())
                                     .body(ex.getResponseBodyAsString());
         }
-
     }
 
     @PostMapping(path = "/reset-password")

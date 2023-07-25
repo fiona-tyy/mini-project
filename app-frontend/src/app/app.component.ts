@@ -1,18 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Transaction, User, UserDTO } from './model';
+import { Component, OnInit } from '@angular/core';
 import { UserService } from './services/user.service';
-import {
-  Observable,
-  Subscription,
-  exhaustMap,
-  firstValueFrom,
-  tap,
-} from 'rxjs';
-import { Router } from '@angular/router';
-import { ExpenseService } from './services/expense.service';
 import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 import { NotificationService } from './services/notification.service';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -20,8 +9,6 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  // token!: any;
-
   constructor(
     private userSvc: UserService,
     private afMessaging: AngularFireMessaging,

@@ -14,7 +14,6 @@ import {
 } from 'rxjs';
 import { Router } from '@angular/router';
 import { UserService } from '../services/user.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-friends',
@@ -22,10 +21,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./friends.component.css'],
 })
 export class FriendsComponent implements OnInit {
-  // activeUser!: UserDTO | null;
-
-  userSub$!: Subscription;
-  // friendSub$!: Subscription;
   friends$!: Observable<Friend[]>;
 
   constructor(private router: Router, private userSvc: UserService) {}
@@ -38,7 +33,7 @@ export class FriendsComponent implements OnInit {
     firstValueFrom(this.userSvc.addFriend(email))
       .then(() => {
         alert('Friend added');
-        this.router.navigate(['/home']);
+        location.reload();
       })
       .catch((err) => {
         alert(err.error.message);

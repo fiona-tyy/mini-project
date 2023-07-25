@@ -12,7 +12,6 @@ CREATE TABLE users (
     PRIMARY KEY(email)
 );
 
-
 CREATE TABLE transactions (
 
     id VARCHAR(256) NOT NULL,
@@ -48,5 +47,3 @@ CREATE TABLE friends (
 
     PRIMARY KEY(user_email, friend_email)
 );
-
-grant all privileges on go_dutch.* to 'Fred'@'localhost';

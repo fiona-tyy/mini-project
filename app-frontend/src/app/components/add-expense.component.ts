@@ -147,23 +147,6 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
       JSON.stringify(expense),
       this.expenseSvc.file
     );
-
-    // WORKING CODE BELOW
-    // this.expenseSvc
-    //   .saveExpense(JSON.stringify(expense), this.expenseSvc.file)
-    //   .subscribe({
-    //     next: (data) => {
-    //       this.expenseSvc.file = null;
-    //       this.router.navigate(['/record', data.transaction_id]);
-    //     },
-    //     error: (err) => {
-    //       alert(
-    //         'Network offline - transaction will be posted when network returns online'
-    //       );
-    //       this.router.navigate(['/home']);
-    //     },
-    //   });
-    // END OF WORKING CODE
   }
 
   ngOnDestroy(): void {
@@ -171,7 +154,6 @@ export class AddExpenseComponent implements OnInit, OnDestroy {
   }
 
   private createForm(r: ReceiptResponseData | null): FormGroup {
-    //TODO create lineitem[] with empty control
     this.itemArr = this.createItemsList(!!r ? r.line_items : []);
     return this.fb.group({
       description: this.fb.control<string>(!!r ? r.description : '', [

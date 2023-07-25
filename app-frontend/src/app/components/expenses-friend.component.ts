@@ -49,7 +49,6 @@ export class ExpensesFriendComponent implements OnInit, OnDestroy {
       (user) => (this.activeUser = user!)
     );
 
-    // TO FIX - if there are no transactions with friend, need to also be able to display
     this.records$ = this.expenseSvc.getOutstandingWithFriends().pipe(
       map((frnds) => {
         return frnds.find((fr) => fr.email == this.friendEmail);

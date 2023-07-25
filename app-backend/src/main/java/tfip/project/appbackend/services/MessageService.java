@@ -22,12 +22,8 @@ public class MessageService {
     @Autowired
     private FirebaseMessaging fcm;
 
-
-
     public void subscribeTopic (String registrationToken, String topic) throws FirebaseMessagingException{
         fcm.subscribeToTopic(Arrays.asList(registrationToken), topic);
-        System.out.println("registered to topic");
-        
     }
 
 

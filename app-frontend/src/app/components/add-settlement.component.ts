@@ -70,27 +70,6 @@ export class AddSettlementComponent implements OnInit, OnDestroy {
         ? this.fileInput.nativeElement.files[0]
         : null
     );
-
-    // WORKING CODE BELOW
-    // this.expenseSvc
-    //   .recordPayment(
-    //     JSON.stringify(settlement),
-    //     !!this.fileInput.nativeElement.files[0]
-    //       ? this.fileInput.nativeElement.files[0]
-    //       : null
-    //   )
-    //   .subscribe({
-    //     next: (resp) => {
-    //       this.router.navigate(['/record', resp.transaction_id]);
-    //     },
-    //     error: (err) => {
-    //       alert(
-    //         'Network offline - transaction will be posted when network returns online'
-    //       );
-    //       this.router.navigate(['/home']);
-    //     },
-    //   });
-    // END OF WORKING CODE
   }
 
   onFileSelected(event: any) {}

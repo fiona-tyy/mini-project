@@ -29,8 +29,6 @@ public class EmailController {
 
         emailSvc.sendSimpleMessage(obj.getString("toName"), obj.getString("toEmail"), obj.getString("senderName"), obj.getString("senderEmail"), obj.getJsonNumber("amount").doubleValue());
        
-
         return ResponseEntity.ok().build();
     }
-    
 }

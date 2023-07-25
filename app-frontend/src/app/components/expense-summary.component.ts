@@ -59,14 +59,6 @@ export class ExpenseSummaryComponent implements OnInit, OnDestroy {
     this.postTransSvc.tryDeleteRecord(transactionId);
   }
 
-  // WORKING CODE BELOW
-  // delete(transactionId: string) {
-  //   firstValueFrom(this.expenseSvc.deleteTransactionById(transactionId))
-  //     .then(() => this.router.navigate(['/home']))
-  //     .catch((err) => alert(err.message));
-  // }
-  // END OF WORKING CODE
-
   share() {
     let node = document.getElementById('page-summary');
     htmlToImage
